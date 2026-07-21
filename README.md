@@ -34,7 +34,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to inspect t
 ### 4. Admin Leads Dashboard
 To view, search, and export captured lead data, visit the Admin Panel route:
 - URL: [http://localhost:3000/admin/leads](http://localhost:3000/admin/leads)
-- query must pe added to access it /leads?secret=8282
+- query must be added to access it /leads?secret=8282
 - username-admin
 - pass-adminpass
   
