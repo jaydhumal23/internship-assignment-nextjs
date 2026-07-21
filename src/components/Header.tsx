@@ -119,7 +119,7 @@ export default function Header({ onEnquireClick }: HeaderProps) {
           <div className="hidden lg:flex items-center">
             <button
               onClick={onEnquireClick}
-              className={`bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-600/15 hover:shadow-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`bg-gradient-to-r from-[#2A75E6] to-[#4F46E5] hover:from-[#1d4ed8] hover:to-[#4338ca] text-white font-extrabold text-xs shadow-md shadow-blue-500/10 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-1.5 cursor-pointer ${
                 isScrolled ? "px-4.5 py-2.5 rounded-full" : "px-5 py-2.5 rounded-xl"
               }`}
             >

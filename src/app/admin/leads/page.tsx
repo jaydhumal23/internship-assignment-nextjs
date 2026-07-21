@@ -19,8 +19,7 @@ interface Lead {
   domain: string;
   candidates: string;
   deliveryMode: string;
-  city: string;
-  country: string;
+  location: string;
   status: string;
   createdAt: string;
 }
@@ -136,8 +135,7 @@ export default function AdminLeads() {
           lead.name.toLowerCase().includes(term) ||
           lead.company.toLowerCase().includes(term) ||
           lead.email.toLowerCase().includes(term) ||
-          lead.city.toLowerCase().includes(term) ||
-          lead.country.toLowerCase().includes(term) ||
+          lead.location.toLowerCase().includes(term) ||
           lead.status.toLowerCase().includes(term)
       );
     }
@@ -223,7 +221,7 @@ export default function AdminLeads() {
   const exportToCSV = () => {
     if (leads.length === 0) return;
 
-    const headers = ["ID", "Name", "Email", "Country Code", "Phone", "Company", "Domain", "Candidates Count", "Delivery Mode", "City", "Country", "Status", "Submission Time"];
+    const headers = ["ID", "Name", "Email", "Country Code", "Phone", "Company", "Domain", "Candidates Count", "Delivery Mode", "Location", "Status", "Submission Time"];
     const rows = leads.map((lead) => [
       lead.id,
       lead.name,
@@ -234,8 +232,7 @@ export default function AdminLeads() {
       lead.domain,
       lead.candidates,
       lead.deliveryMode,
-      lead.city,
-      lead.country,
+      lead.location,
       lead.status,
       lead.createdAt,
     ]);
@@ -291,22 +288,9 @@ export default function AdminLeads() {
   // 1. Authorization status mounting loader
   if (isAuthenticated === null) {
     return (
-      <div className="min-h-screen bg-[#F0F4FF] flex flex-col items-center justify-center gap-3 select-none relative overflow-hidden">
-        {/* Same aurora background as login */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[-10%] left-[-5%] w-[50vw] h-[50vw] rounded-full bg-blue-400/20 blur-[120px]" style={{animation:"floatA 18s ease-in-out infinite"}} />
-          <div className="absolute bottom-[-15%] right-[-5%] w-[45vw] h-[45vw] rounded-full bg-indigo-400/15 blur-[100px]" style={{animation:"floatB 22s ease-in-out infinite"}} />
-          <div className="absolute top-[40%] right-[10%] w-[30vw] h-[30vw] rounded-full bg-violet-400/10 blur-[80px]" style={{animation:"floatC 26s ease-in-out infinite"}} />
-        </div>
-        <style>{`
-          @keyframes floatA { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(60px,-40px) scale(1.08)} 66%{transform:translate(-30px,50px) scale(0.95)} }
-          @keyframes floatB { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(-70px,30px) scale(1.1)} 66%{transform:translate(40px,-60px) scale(0.92)} }
-          @keyframes floatC { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-50px,-40px) scale(1.05)} }
-        `}</style>
-        <div className="relative z-10 flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin" />
-          <p className="text-sm font-bold text-slate-500 tracking-wide animate-pulse">Securing session...</p>
-        </div>
+      <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center gap-3 select-none">
+        <div className="w-10 h-10 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
+        <p className="text-sm font-bold text-slate-500 tracking-wide animate-pulse">Securing session...</p>
       </div>
     );
   }
@@ -314,85 +298,87 @@ export default function AdminLeads() {
   // 2. Authentication required: Render centered login form card
   if (isAuthenticated === false) {
     return (
-      <div className="min-h-screen bg-[#F0F4FF] flex flex-col items-center justify-center p-4 relative overflow-hidden select-none">
+      <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center p-4 relative overflow-hidden select-none">
+        
+        {/* Ambient background glows with animations */}
+        <div className="absolute top-[10%] left-[10%] w-[450px] h-[450px] bg-blue-400/10 rounded-full blur-[120px] pointer-events-none animate-float-slow" />
+        <div className="absolute bottom-[10%] right-[10%] w-[500px] h-[500px] bg-emerald-400/10 rounded-full blur-[130px] pointer-events-none animate-float-reverse" />
+        <div className="absolute top-[40%] right-[20%] w-[350px] h-[350px] bg-purple-400/8 rounded-full blur-[100px] pointer-events-none animate-float-slow [animation-delay:-6s]" />
 
-        {/* ── Animated aurora orbs ── */}
-        <div className="absolute inset-0 pointer-events-none">
-          {/* Large primary orb — top-left */}
-          <div
-            className="absolute top-[-12%] left-[-8%] w-[55vw] h-[55vw] rounded-full bg-blue-400/25 blur-[130px]"
-            style={{animation:"floatA 20s ease-in-out infinite"}}
-          />
-          {/* Indigo orb — bottom-right */}
-          <div
-            className="absolute bottom-[-15%] right-[-8%] w-[50vw] h-[50vw] rounded-full bg-indigo-400/20 blur-[110px]"
-            style={{animation:"floatB 25s ease-in-out infinite"}}
-          />
-          {/* Violet accent orb — center-right */}
-          <div
-            className="absolute top-[35%] right-[5%] w-[32vw] h-[32vw] rounded-full bg-violet-400/15 blur-[90px]"
-            style={{animation:"floatC 30s ease-in-out infinite"}}
-          />
-          {/* Emerald accent orb — bottom-left */}
-          <div
-            className="absolute bottom-[5%] left-[10%] w-[28vw] h-[28vw] rounded-full bg-cyan-400/12 blur-[80px]"
-            style={{animation:"floatD 22s ease-in-out infinite"}}
-          />
-        </div>
+        {/* Animated Wavy Lines Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
+          <svg className="absolute w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="wave-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#2563eb" stopOpacity="0" />
+                <stop offset="50%" stopColor="#3b82f6" stopOpacity="0.3" />
+                <stop offset="100%" stopColor="#60a5fa" stopOpacity="0" />
+              </linearGradient>
+              <linearGradient id="wave-grad-2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#10b981" stopOpacity="0" />
+                <stop offset="50%" stopColor="#34d399" stopOpacity="0.25" />
+                <stop offset="100%" stopColor="#059669" stopOpacity="0" />
+              </linearGradient>
+              <linearGradient id="wave-grad-3" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0" />
+                <stop offset="50%" stopColor="#a78bfa" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="#c084fc" stopOpacity="0" />
+              </linearGradient>
+            </defs>
 
-        {/* ── Animated dot-grid overlay ── */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.35]"
-          style={{
-            backgroundImage: "radial-gradient(circle, #94a3b8 1px, transparent 1px)",
-            backgroundSize: "32px 32px",
-            animation: "gridDrift 60s linear infinite",
-          }}
-        />
-
-        {/* ── Diagonal beam lines (data-flow) ── */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.06]" xmlns="http://www.w3.org/2000/svg">
-          {[0,1,2,3,4,5,6,7].map(i => (
-            <line
-              key={i}
-              x1={`${i * 15 - 5}%`} y1="0%"
-              x2={`${i * 15 + 40}%`} y2="100%"
-              stroke="#3b82f6" strokeWidth="1"
-              style={{animation:`beamFade 4s ease-in-out infinite`, animationDelay:`${i * 0.5}s`}}
+            {/* Wave 1 */}
+            <path
+              className="wave-line-1"
+              d="M-200,300 C150,200 350,500 700,350 C1050,200 1250,550 1600,400"
+              fill="none"
+              stroke="url(#wave-grad-1)"
+              strokeWidth="3"
             />
-          ))}
-        </svg>
+            {/* Wave 2 */}
+            <path
+              className="wave-line-2"
+              d="M-200,450 C200,600 450,250 800,400 C1150,550 1350,300 1700,450"
+              fill="none"
+              stroke="url(#wave-grad-2)"
+              strokeWidth="2.5"
+            />
+            {/* Wave 3 */}
+            <path
+              className="wave-line-3"
+              d="M-200,350 C100,500 400,200 750,300 C1100,400 1300,150 1650,250"
+              fill="none"
+              stroke="url(#wave-grad-3)"
+              strokeWidth="2"
+            />
+          </svg>
 
-        {/* Keyframes */}
-        <style>{`
-          @keyframes floatA {
-            0%,100% { transform: translate(0,0) scale(1); }
-            33%      { transform: translate(80px,-60px) scale(1.1); }
-            66%      { transform: translate(-40px,70px) scale(0.93); }
-          }
-          @keyframes floatB {
-            0%,100% { transform: translate(0,0) scale(1); }
-            33%      { transform: translate(-90px,40px) scale(1.12); }
-            66%      { transform: translate(50px,-80px) scale(0.9); }
-          }
-          @keyframes floatC {
-            0%,100% { transform: translate(0,0) scale(1); }
-            50%      { transform: translate(-60px,-50px) scale(1.08); }
-          }
-          @keyframes floatD {
-            0%,100% { transform: translate(0,0) scale(1); }
-            40%      { transform: translate(70px,-30px) scale(1.06); }
-            80%      { transform: translate(-20px,60px) scale(0.96); }
-          }
-          @keyframes gridDrift {
-            from { background-position: 0 0; }
-            to   { background-position: 320px 320px; }
-          }
-          @keyframes beamFade {
-            0%,100% { opacity: 0; }
-            50%      { opacity: 1; }
-          }
-        `}</style>
+          <style>{`
+            @keyframes wave-sway-1 {
+              0%, 100% { transform: translateY(-30px) scaleY(0.9) rotate(0deg); }
+              50% { transform: translateY(30px) scaleY(1.1) rotate(1deg); }
+            }
+            @keyframes wave-sway-2 {
+              0%, 100% { transform: translateY(20px) scaleY(1.15) rotate(0deg); }
+              50% { transform: translateY(-20px) scaleY(0.85) rotate(-1deg); }
+            }
+            @keyframes wave-sway-3 {
+              0%, 100% { transform: translateY(-15px) scaleY(0.95) rotate(0deg); }
+              50% { transform: translateY(15px) scaleY(1.05) rotate(0.5deg); }
+            }
+            .wave-line-1 {
+              transform-origin: center;
+              animation: wave-sway-1 12s infinite ease-in-out;
+            }
+            .wave-line-2 {
+              transform-origin: center;
+              animation: wave-sway-2 15s infinite ease-in-out;
+            }
+            .wave-line-3 {
+              transform-origin: center;
+              animation: wave-sway-3 18s infinite ease-in-out;
+            }
+          `}</style>
+        </div>
 
         {/* Back navigation */}
         <Link 
@@ -948,11 +934,8 @@ export default function AdminLeads() {
                         <td className="px-6 py-4.5">
                           <div className="flex items-center gap-1 text-slate-700 font-semibold">
                             <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                            <span>{lead.city}</span>
+                            <span>{lead.location}</span>
                           </div>
-                          <span className="block text-[10px] text-slate-450 font-bold uppercase tracking-wider pl-4.5 mt-0.5">
-                            {lead.country}
-                          </span>
                         </td>
 
                         <td className="px-6 py-4.5 whitespace-nowrap text-right text-slate-500 font-semibold font-mono text-xs">

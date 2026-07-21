@@ -5,8 +5,11 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Stats from "@/components/Stats";
 import Clients from "@/components/Clients";
-import AccredianEdge from "@/components/AccredianEdge";
+import AccredianEdge, { HowItWorks } from "@/components/AccredianEdge";
 import DomainExpertise from "@/components/DomainExpertise";
+import CourseSegmentation from "@/components/CourseSegmentation";
+import WhoShouldJoin from "@/components/WhoShouldJoin";
+import CatFramework from "@/components/CatFramework";
 import CtaBanner from "@/components/CtaBanner";
 import Testimonials from "@/components/Testimonials";
 import FAQs from "@/components/FAQs";
@@ -122,9 +125,20 @@ function Preloader({ children }: { children: React.ReactNode }) {
 
 export default function Home() {
   const [isEnquireModalOpen, setIsEnquireModalOpen] = useState(false);
+  const [preselectedDomain, setPreselectedDomain] = useState<string | undefined>(undefined);
 
-  const openEnquireModal = () => setIsEnquireModalOpen(true);
-  const closeEnquireModal = () => setIsEnquireModalOpen(false);
+  const openEnquireModal = (domain?: string) => {
+    if (domain && typeof domain === "string") {
+      setPreselectedDomain(domain);
+    } else {
+      setPreselectedDomain(undefined);
+    }
+    setIsEnquireModalOpen(true);
+  };
+  const closeEnquireModal = () => {
+    setIsEnquireModalOpen(false);
+    setPreselectedDomain(undefined);
+  };
 
   useEffect(() => {
     const imageUrls = ["/hero-v2.png", "/cutiepro.png"];
@@ -174,42 +188,62 @@ export default function Home() {
         </div>
 
         {/* Hero Section */}
-        <div className="relative z-10">
+        <div className="relative z-10 transform-gpu isolate">
           <Hero onEnquireClick={openEnquireModal} />
         </div>
 
         {/* Milestone Stats */}
-        <div className="relative z-10">
+        <div className="relative z-10 transform-gpu isolate">
           <Stats />
         </div>
 
         {/* Brand Partnerships */}
-        <div className="relative z-10">
+        <div className="relative z-10 transform-gpu isolate">
           <Clients />
         </div>
 
-        {/* Accredian Value Propositions & Timeline */}
-        <div className="relative z-10">
+        {/* Accredian Value Propositions */}
+        <div className="relative z-10 transform-gpu isolate">
           <AccredianEdge />
         </div>
 
         {/* Domain Expertise & CAT framework */}
-        <div className="relative z-10">
-          <DomainExpertise />
+        <div className="relative z-10 transform-gpu isolate">
+          <DomainExpertise onEnquireClick={openEnquireModal} />
+        </div>
+
+        {/* Course Segmentation */}
+        <div className="relative z-10 transform-gpu isolate">
+          <CourseSegmentation />
+        </div>
+
+        {/* Who Should Join Cohorts */}
+        <div className="relative z-10 transform-gpu isolate">
+          <WhoShouldJoin />
+        </div>
+
+        {/* CAT Framework */}
+        <div className="relative z-10 transform-gpu isolate">
+          <CatFramework />
+        </div>
+
+        {/* How It Works Timeline */}
+        <div className="relative z-10 transform-gpu isolate">
+          <HowItWorks />
         </div>
 
         {/* Call to Action Banner */}
-        <div className="relative z-10">
+        <div className="relative z-10 transform-gpu isolate">
           <CtaBanner onEnquireClick={openEnquireModal} />
         </div>
 
         {/* FAQs Accordion */}
-        <div className="relative z-10">
+        <div className="relative z-10 transform-gpu isolate">
           <FAQs />
         </div>
 
         {/* Client Reviews */}
-        <div className="relative z-10">
+        <div className="relative z-10 transform-gpu isolate">
           <Testimonials />
         </div>
       </main>
@@ -218,7 +252,7 @@ export default function Home() {
       <Footer />
 
         {/* Leads Capture Popup Form Modal */}
-        <EnquiryModal isOpen={isEnquireModalOpen} onClose={closeEnquireModal} />
+        <EnquiryModal isOpen={isEnquireModalOpen} onClose={closeEnquireModal} initialDomain={preselectedDomain} />
       </>
     </Preloader>
   );

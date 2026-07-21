@@ -72,14 +72,9 @@ export function validateEnquiryPayload(data: any): EnquiryValidationResult {
     errors.company = "Company name is required";
   }
 
-  // Country check
-  if (!isNotEmpty(data.country)) {
-    errors.country = "Country is required";
-  }
-
-  // City check
-  if (!isNotEmpty(data.city)) {
-    errors.city = "City is required";
+  // Location check
+  if (!isNotEmpty(data.location)) {
+    errors.location = "Location is required";
   }
 
   // Rest of drop-down items validation

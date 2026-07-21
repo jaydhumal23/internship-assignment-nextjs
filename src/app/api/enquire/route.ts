@@ -6,7 +6,7 @@ import { validateEnquiryPayload } from "@/utils/validation";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, email, countryCode, phone, company, domain, candidates, deliveryMode, city, country } = body;
+    const { name, email, countryCode, phone, company, domain, candidates, deliveryMode, location } = body;
 
     // Server-side validation using shared utility library
     const validation = validateEnquiryPayload(body);
@@ -25,10 +25,9 @@ export async function POST(req: NextRequest) {
       phone: phone.trim(),
       company: company.trim(),
       domain,
-      candidates,
+      candidates: typeof candidates === "string" ? candidates.trim() : candidates,
       deliveryMode,
-      city: city.trim(),
-      country: country.trim(),
+      location: location ? location.trim() : "",
       status: "In Talk", // Default initial sales status
       createdAt: new Date().toISOString(),
     };
@@ -99,8 +98,7 @@ export async function GET(req: NextRequest) {
       domain: lead.domain,
       candidates: lead.candidates,
       deliveryMode: lead.deliveryMode,
-      city: lead.city,
-      country: lead.country,
+      location: lead.location || `${lead.city || ""}${lead.city && lead.country ? ", " : ""}${lead.country || ""}` || "Unknown",
       status: lead.status || "In Talk", // Default for legacy data
       createdAt: lead.createdAt
     }));

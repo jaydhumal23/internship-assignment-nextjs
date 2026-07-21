@@ -1,11 +1,86 @@
 "use client";
 
-import React, { useState } from "react";
-import { ArrowRight, Check, Zap } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { ArrowRight, Check } from "lucide-react";
 import Image from "next/image";
 
 interface HeroProps {
   onEnquireClick: () => void;
+}
+
+// Words to cycle through for each blue slot
+const WORDS_1 = ["Expertise", "Innovation", "Excellence", "Solutions"];
+const WORDS_2 = ["Enterprise", "Workforce", "Business", "Teams"];
+
+function useTypewriter(words: string[], typingSpeed = 80, erasingSpeed = 45, pauseMs = 1800) {
+  const [display, setDisplay] = useState("");
+  const [wordIdx, setWordIdx] = useState(0);
+  const [phase, setPhase] = useState<"typing" | "pausing" | "erasing">("typing");
+  const [charIdx, setCharIdx] = useState(0);
+
+  useEffect(() => {
+    const word = words[wordIdx];
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (phase === "typing") {
+      if (charIdx < word.length) {
+        timeout = setTimeout(() => {
+          setDisplay(word.slice(0, charIdx + 1));
+          setCharIdx(c => c + 1);
+        }, typingSpeed);
+      } else {
+        timeout = setTimeout(() => setPhase("pausing"), pauseMs);
+      }
+    } else if (phase === "pausing") {
+      timeout = setTimeout(() => setPhase("erasing"), 200);
+    } else {
+      if (charIdx > 0) {
+        timeout = setTimeout(() => {
+          setDisplay(word.slice(0, charIdx - 1));
+          setCharIdx(c => c - 1);
+        }, erasingSpeed);
+      } else {
+        setWordIdx(i => (i + 1) % words.length);
+        setPhase("typing");
+      }
+    }
+    return () => clearTimeout(timeout);
+  }, [phase, charIdx, wordIdx, words, typingSpeed, erasingSpeed, pauseMs]);
+
+  // longest word = ghost placeholder width
+  const longest = words.reduce((a, b) => (a.length >= b.length ? a : b), "");
+  return { display, longest };
+}
+
+function TypewriterWord({ words, delay = 0 }: { words: string[]; delay?: number }) {
+  const [started, setStarted] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setStarted(true), delay);
+    return () => clearTimeout(t);
+  }, [delay]);
+
+  const { display, longest } = useTypewriter(started ? words : [words[0]]);
+  const text = started ? display : words[0];
+
+  return (
+    // Ghost span keeps the width of the longest word so surrounding text never shifts
+    <span className="relative inline-block" style={{ verticalAlign: "baseline" }}>
+      {/* Invisible ghost = always full width of longest word */}
+      <span
+        aria-hidden
+        className="invisible select-none font-serif italic font-semibold"
+      >
+        {longest}
+      </span>
+      {/* Visible animated text sits on top */}
+      <span
+        className="absolute inset-0 font-serif italic font-semibold bg-gradient-to-r from-[#2A75E6] to-[#4F46E5] bg-clip-text text-transparent"
+        aria-live="off"
+      >
+        {text}
+      </span>
+    </span>
+  );
 }
 
 export default function Hero({ onEnquireClick }: HeroProps) {
@@ -37,7 +112,7 @@ export default function Hero({ onEnquireClick }: HeroProps) {
 
               {/* Headline */}
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-6">
-                Next-Gen <span className="text-blue-600">Expertise</span> For Your <span className="text-blue-600">Enterprise</span>
+                Next-Gen <TypewriterWord words={WORDS_1} delay={400} /> For Your <TypewriterWord words={WORDS_2} delay={1600} />
               </h1>
 
               {/* Description */}
@@ -71,7 +146,7 @@ export default function Hero({ onEnquireClick }: HeroProps) {
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                 <button
                   onClick={onEnquireClick}
-                  className="w-full sm:w-auto px-7 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-black text-sm rounded-xl shadow-lg shadow-blue-600/15 hover:shadow-xl hover:shadow-blue-600/25 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="w-full sm:w-auto px-7 py-3.5 bg-gradient-to-r from-[#2A75E6] to-[#4F46E5] hover:from-[#1d4ed8] hover:to-[#4338ca] text-white font-black text-sm rounded-xl shadow-md shadow-blue-500/10 hover:shadow-xl hover:shadow-blue-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   Enquire Now
                   <ArrowRight className="w-4.5 h-4.5" />
