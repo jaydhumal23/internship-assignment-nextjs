@@ -84,14 +84,14 @@ export default function Hero({ onEnquireClick }: HeroProps) {
             </div>
 
             {/* Right Column (Professionals Cutout Image aligned to bottom card border) */}
-            <div className="lg:col-span-5 flex justify-center lg:justify-end self-end -mb-8 sm:-mb-12 lg:-mb-16">
-              <div className="relative w-full max-w-[380px] lg:max-w-none aspect-square lg:aspect-auto lg:h-[350px] xl:h-[400px] flex items-end">
+            <div className="lg:col-span-5 flex justify-center lg:justify-end self-end -mb-4 sm:-mb-8 lg:-mb-10">
+              <div className="relative w-full max-w-[460px] sm:max-w-[520px] lg:max-w-[620px] aspect-square lg:aspect-auto lg:h-[440px] xl:h-[500px] flex items-end">
                 <Image
                   src="/hero-v2.png"
                   alt="Accredian Enterprise Upskilling Professionals"
                   width={420}
                   height={420}
-                  className="w-full h-auto object-contain mix-blend-multiply"
+                  className="w-full h-auto object-contain mix-blend-multiply scale-[1.1]"
                   priority
                 />
               </div>
