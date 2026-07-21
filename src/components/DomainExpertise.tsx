@@ -48,19 +48,19 @@ const catFramework = [
     letter: "C",
     title: "Concept",
     desc: "Laying the foundations. Classroom theory, code-walkthroughs, and structural blueprints lead by seasoned industry experts.",
-    colorClass: "bg-blue-500/10 border-blue-200 text-blue-700",
+    colorClass: "bg-blue-50 border-blue-200 text-blue-700",
   },
   {
     letter: "A",
     title: "Application",
     desc: "Translating words into code. Live virtual sandbox environments, homework repositories, and interactive group sprints.",
-    colorClass: "bg-emerald-500/10 border-emerald-200 text-emerald-700",
+    colorClass: "bg-emerald-50 border-emerald-200 text-emerald-700",
   },
   {
     letter: "T",
     title: "Transformation",
     desc: "Realizing output. Rigorous final assessments, project code reviews, and comprehensive capability dashboard summaries.",
-    colorClass: "bg-purple-500/10 border-purple-200 text-purple-700",
+    colorClass: "bg-purple-50 border-purple-200 text-purple-700",
   },
 ];
 

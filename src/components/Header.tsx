@@ -23,10 +23,10 @@ export default function Header({ onEnquireClick }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Monitor scroll for header background opacity
+  // Monitor scroll for header transitions
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
+      if (window.scrollY > 30) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
@@ -40,7 +40,7 @@ export default function Header({ onEnquireClick }: HeaderProps) {
   useEffect(() => {
     const observerOptions = {
       root: null,
-      rootMargin: "-20% 0px -60% 0px", // triggers when section is in the middle of the viewport
+      rootMargin: "-25% 0px -55% 0px", // triggers when section is in viewport
       threshold: 0.15,
     };
 
@@ -67,7 +67,6 @@ export default function Header({ onEnquireClick }: HeaderProps) {
     const el = document.getElementById(id);
     if (el) {
       el.scrollIntoView({ behavior: "smooth" });
-      // Update hash in URL
       window.history.pushState(null, "", `#${id}`);
       setActiveSection(id);
     }
@@ -76,69 +75,74 @@ export default function Header({ onEnquireClick }: HeaderProps) {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 border-b border-slate-100/80 bg-white/75 backdrop-blur-md ${
-          isScrolled ? "shadow-xs py-3" : "py-4.5"
+        className={`fixed left-1/2 -translate-x-1/2 z-40 transition-all duration-500 ease-in-out border border-slate-200/60 bg-white/80 backdrop-blur-md shadow-xs ${
+          isScrolled
+            ? "top-3 w-[95%] max-w-6xl rounded-2xl py-2 px-8 shadow-md border-blue-100/30"
+            : "top-4 w-[95%] max-w-6xl rounded-2xl py-3.5 px-8"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <div className="flex items-center cursor-pointer" onClick={() => handleNavClick("home")}>
-              <span className="text-2xl font-black text-brand-primary tracking-tight">
-                accredian<span className="text-brand-accent">.</span>
-              </span>
-              <span className="hidden sm:inline-block ml-2 px-1.5 py-0.5 bg-brand-primary/5 text-[10px] font-bold text-brand-primary uppercase rounded tracking-wider border border-brand-primary/10">
-                Enterprise
-              </span>
-            </div>
+        <div className="w-full flex items-center justify-between">
+          
+          {/* Logo */}
+          <div 
+            className="flex items-center cursor-pointer select-none" 
+            onClick={() => handleNavClick("home")}
+          >
+            <span className="text-xl sm:text-2xl font-black text-brand-primary tracking-tight">
+              accredian<span className="text-brand-accent">.</span>
+            </span>
+            <span className={`hidden sm:inline-block ml-2 px-1.5 py-0.5 text-[9px] font-bold text-brand-primary uppercase rounded-md tracking-wider transition-all duration-500 ${
+              isScrolled ? "bg-brand-primary/5 border border-brand-primary/10" : "bg-brand-primary/10"
+            }`}>
+              Enterprise
+            </span>
+          </div>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-1">
-              {navItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => handleNavClick(item.id)}
-                  className={`relative px-3 py-2 text-sm font-semibold rounded-md transition-colors cursor-pointer ${
-                    activeSection === item.id
-                      ? "text-brand-primary"
-                      : "text-slate-600 hover:text-brand-primary hover:bg-slate-50"
-                  }`}
-                >
-                  {item.label}
-                  {activeSection === item.id && (
-                    <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-brand-primary rounded-full animate-fade-in" />
-                  )}
-                </button>
-              ))}
-            </nav>
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center gap-1">
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => handleNavClick(item.id)}
+                className={`px-3.5 py-1.5 text-xs font-bold rounded-full transition-all duration-300 cursor-pointer ${
+                  activeSection === item.id
+                    ? "bg-blue-600/10 text-blue-600"
+                    : "text-slate-650 hover:text-blue-650 hover:bg-slate-100/50"
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </nav>
 
-            {/* Desktop Actions */}
-            <div className="hidden lg:flex items-center">
-              <button
-                onClick={onEnquireClick}
-                className="px-5 py-2 bg-brand-primary hover:bg-brand-primary-light text-white font-bold text-sm rounded-lg shadow-sm hover:shadow transition-all flex items-center gap-1.5 cursor-pointer"
-              >
-                Enquire Now
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
+          {/* Desktop Actions */}
+          <div className="hidden lg:flex items-center">
+            <button
+              onClick={onEnquireClick}
+              className={`bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-600/15 hover:shadow-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                isScrolled ? "px-4.5 py-2.5 rounded-full" : "px-5 py-2.5 rounded-xl"
+              }`}
+            >
+              Enquire Now
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
 
-            {/* Mobile Menu Toggle */}
-            <div className="lg:hidden flex items-center gap-3">
-              <button
-                onClick={onEnquireClick}
-                className="px-3.5 py-1.5 bg-brand-primary hover:bg-brand-primary-light text-white font-bold text-xs rounded-md shadow-sm transition-all cursor-pointer"
-              >
-                Enquire
-              </button>
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-1.5 text-slate-600 hover:text-slate-900 focus:outline-none cursor-pointer"
-                aria-label="Toggle mobile menu"
-              >
-                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </button>
-            </div>
+          {/* Mobile Menu Toggle */}
+          <div className="lg:hidden flex items-center gap-2">
+            <button
+              onClick={onEnquireClick}
+              className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-full shadow-sm transition-all cursor-pointer"
+            >
+              Enquire
+            </button>
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-1.5 text-slate-600 hover:text-slate-900 focus:outline-none cursor-pointer"
+              aria-label="Toggle mobile menu"
+            >
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
       </header>
@@ -153,7 +157,7 @@ export default function Header({ onEnquireClick }: HeaderProps) {
 
       {/* Mobile Navigation Drawer */}
       <div
-        className={`fixed top-0 right-0 bottom-0 z-50 w-72 max-w-full bg-white shadow-2xl border-l border-slate-100 flex flex-col p-6 transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed top-0 right-0 bottom-0 z-50 w-72 max-w-full bg-white shadow-2xl border-l border-slate-150 flex flex-col p-6 transition-transform duration-300 ease-in-out lg:hidden ${
           isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -171,15 +175,15 @@ export default function Header({ onEnquireClick }: HeaderProps) {
         </div>
 
         {/* Drawer Links */}
-        <nav className="flex flex-col gap-2 flex-grow">
+        <nav className="flex flex-col gap-1.5 flex-grow">
           {navItems.map((item) => (
             <button
               key={item.id}
               onClick={() => handleNavClick(item.id)}
-              className={`w-full text-left px-4 py-3 text-sm font-semibold rounded-lg transition-colors cursor-pointer ${
+              className={`w-full text-left px-4 py-3 text-sm font-semibold rounded-xl transition-colors cursor-pointer ${
                 activeSection === item.id
-                  ? "bg-brand-primary/5 text-brand-primary border-l-4 border-brand-primary pl-3"
-                  : "text-slate-600 hover:bg-slate-50 hover:text-brand-primary"
+                  ? "bg-blue-600/10 text-blue-600 font-bold border-l-4 border-blue-600 pl-3"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-blue-600"
               }`}
             >
               {item.label}
@@ -194,10 +198,10 @@ export default function Header({ onEnquireClick }: HeaderProps) {
               setIsMobileMenuOpen(false);
               onEnquireClick();
             }}
-            className="w-full flex items-center justify-center gap-2 py-3 bg-brand-primary hover:bg-brand-primary-light text-white font-bold text-sm rounded-lg shadow-lg hover:shadow-xl transition-all cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-lg hover:shadow-xl transition-all cursor-pointer"
           >
             Enquire Now
-            <ArrowRight className="w-4.5 h-4.5" />
+            <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </div>

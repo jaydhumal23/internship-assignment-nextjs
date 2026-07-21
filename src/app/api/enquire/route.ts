@@ -9,10 +9,10 @@ const FILE_PATH = path.join(DATA_DIR, "leads.json");
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, email, phone, company, domain, candidates, deliveryMode, location } = body;
+    const { name, email, countryCode, phone, company, domain, candidates, deliveryMode, city, country } = body;
 
-    // Server side validation
-    if (!name || !email || !phone || !company || !domain || !candidates || !deliveryMode || !location) {
+    // Server-side validation
+    if (!name || !email || !countryCode || !phone || !company || !domain || !candidates || !deliveryMode || !city || !country) {
       return NextResponse.json(
         { error: "All required fields must be filled out." },
         { status: 400 }
@@ -28,9 +28,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Phone validation
-    if (!/^\+?[0-9\s-]{8,15}$/.test(phone)) {
+    if (!/^[0-9\s-()]{7,12}$/.test(phone)) {
       return NextResponse.json(
-        { error: "Invalid phone number format." },
+        { error: "Invalid phone number format. It should contain between 7 and 12 digits." },
         { status: 400 }
       );
     }
@@ -40,12 +40,14 @@ export async function POST(req: NextRequest) {
       id: `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       name: name.trim(),
       email: email.trim().toLowerCase(),
+      countryCode,
       phone: phone.trim(),
       company: company.trim(),
       domain,
       candidates,
       deliveryMode,
-      location: location.trim(),
+      city: city.trim(),
+      country: country.trim(),
       createdAt: new Date().toISOString(),
     };
 

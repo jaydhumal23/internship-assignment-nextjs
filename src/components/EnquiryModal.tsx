@@ -12,12 +12,14 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    countryCode: "+91",
     phone: "",
     company: "",
     domain: "Tech",
     candidates: "10-50",
     deliveryMode: "Live Virtual",
-    location: "",
+    city: "",
+    country: "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -51,12 +53,13 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
     
     if (!formData.phone.trim()) {
       newErrors.phone = "Phone number is required";
-    } else if (!/^\+?[0-9\s-]{8,15}$/.test(formData.phone.trim())) {
-      newErrors.phone = "Please enter a valid phone number (8-15 digits)";
+    } else if (!/^[0-9\s-()]{7,12}$/.test(formData.phone.trim())) {
+      newErrors.phone = "Please enter a valid phone number (7-12 digits)";
     }
     
     if (!formData.company.trim()) newErrors.company = "Company name is required";
-    if (!formData.location.trim()) newErrors.location = "Location/City is required";
+    if (!formData.city.trim()) newErrors.city = "City is required";
+    if (!formData.country.trim()) newErrors.country = "Country is required";
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -95,12 +98,14 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
         setFormData({
           name: "",
           email: "",
+          countryCode: "+91",
           phone: "",
           company: "",
           domain: "Tech",
           candidates: "10-50",
           deliveryMode: "Live Virtual",
-          location: "",
+          city: "",
+          country: "",
         });
       } else {
         setSubmitStatus("error");
@@ -198,16 +203,34 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                   <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                     Phone Number <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="+1 555 0199"
-                    className={`w-full px-3 py-2 border rounded-lg text-slate-800 text-sm focus:outline-none focus:ring-2 transition-all ${
-                      errors.phone ? "border-red-300 focus:ring-red-100" : "border-slate-200 focus:ring-brand-primary-light/20 focus:border-brand-primary-light"
-                    }`}
-                  />
+                  <div className="flex gap-2">
+                    <select
+                      name="countryCode"
+                      value={formData.countryCode}
+                      onChange={handleChange}
+                      className="px-2 py-2 border border-slate-200 rounded-lg text-slate-850 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary-light/20 focus:border-brand-primary-light bg-white shrink-0 w-24"
+                    >
+                      <option value="+91">IN (+91)</option>
+                      <option value="+1">US (+1)</option>
+                      <option value="+44">UK (+44)</option>
+                      <option value="+61">AU (+61)</option>
+                      <option value="+65">SG (+65)</option>
+                      <option value="+971">AE (+971)</option>
+                      <option value="+49">DE (+49)</option>
+                      <option value="+33">FR (+33)</option>
+                      <option value="+81">JP (+81)</option>
+                    </select>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      placeholder="98765 43210"
+                      className={`flex-grow px-3 py-2 border rounded-lg text-slate-800 text-sm focus:outline-none focus:ring-2 transition-all ${
+                        errors.phone ? "border-red-300 focus:ring-red-100" : "border-slate-200 focus:ring-brand-primary-light/20 focus:border-brand-primary-light"
+                      }`}
+                    />
+                  </div>
                   {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                 </div>
               </div>
@@ -284,21 +307,40 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                   </select>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                    Corporate Location / City <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    placeholder="New York, USA"
-                    className={`w-full px-3 py-2 border rounded-lg text-slate-800 text-sm focus:outline-none focus:ring-2 transition-all ${
-                      errors.location ? "border-red-300 focus:ring-red-100" : "border-slate-200 focus:ring-brand-primary-light/20 focus:border-brand-primary-light"
-                    }`}
-                  />
-                  {errors.location && <p className="text-red-500 text-xs mt-1">{errors.location}</p>}
+                {/* Delivery format - split city/country */}
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[10px] font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                      City <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleChange}
+                      placeholder="New York"
+                      className={`w-full px-3 py-2 border rounded-lg text-slate-800 text-sm focus:outline-none focus:ring-2 transition-all ${
+                        errors.city ? "border-red-300 focus:ring-red-100" : "border-slate-200 focus:ring-brand-primary-light/20 focus:border-brand-primary-light"
+                      }`}
+                    />
+                    {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                      Country <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="country"
+                      value={formData.country}
+                      onChange={handleChange}
+                      placeholder="USA"
+                      className={`w-full px-3 py-2 border rounded-lg text-slate-800 text-sm focus:outline-none focus:ring-2 transition-all ${
+                        errors.country ? "border-red-300 focus:ring-red-100" : "border-slate-200 focus:ring-brand-primary-light/20 focus:border-brand-primary-light"
+                      }`}
+                    />
+                    {errors.country && <p className="text-red-500 text-xs mt-1">{errors.country}</p>}
+                  </div>
                 </div>
               </div>
 
