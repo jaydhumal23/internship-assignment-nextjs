@@ -16,13 +16,11 @@ import EnquiryModal from "@/components/EnquiryModal";
 export default function Home() {
   const [isEnquireModalOpen, setIsEnquireModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
 
   const openEnquireModal = () => setIsEnquireModalOpen(true);
   const closeEnquireModal = () => setIsEnquireModalOpen(false);
 
   useEffect(() => {
-    let cancelled = false;
     const imageUrls = ["/hero-v2.png", "/cutiepro.png"];
 
     const preloadImage = (src: string) =>
@@ -34,33 +32,11 @@ export default function Home() {
       });
 
     const preloadAssets = async () => {
-      for (let index = 0; index < imageUrls.length; index += 1) {
-        await preloadImage(imageUrls[index]);
-        if (!cancelled) {
-          setProgress(Math.round(((index + 1) / imageUrls.length) * 100));
-        }
-      }
-
-      if (!cancelled) {
-        setProgress(100);
-        window.setTimeout(() => setIsLoading(false), 300);
-      }
+      await Promise.all(imageUrls.map(preloadImage));
+      setIsLoading(false);
     };
 
-    const startLoading = () => {
-      void preloadAssets();
-    };
-
-    if (document.readyState === "complete") {
-      startLoading();
-    } else {
-      window.addEventListener("load", startLoading);
-    }
-
-    return () => {
-      cancelled = true;
-      window.removeEventListener("load", startLoading);
-    };
+    void preloadAssets();
   }, []);
 
   if (isLoading) {
@@ -71,12 +47,6 @@ export default function Home() {
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">
             Loading
           </p>
-          <div className="mt-4 h-1.5 w-56 max-w-full overflow-hidden rounded-full bg-slate-200">
-            <div
-              className="h-full rounded-full bg-blue-600 transition-all duration-300"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
         </div>
       </div>
     );
