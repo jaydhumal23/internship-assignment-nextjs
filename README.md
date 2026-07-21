@@ -4,6 +4,12 @@ Recreation of the Accredian Enterprise landing page (`https://enterprise.accredi
 
 ---
 
+<img src="./public/r1.png" />
+<br/>
+<img src="./public/r2.png" />
+<br/>
+<img src="./public/r3.png" />
+
 ## 🚀 Setup Instructions
 
 Follow these steps to run the project locally:
@@ -37,7 +43,7 @@ npm run build
 
 ---
 
-## 🎯 Approach Taken
+##  Approach Taken
 
 1. **Analysis & Extraction**: Used a browser subagent to scrape the live URL `https://enterprise.accredian.com/`. Extracted text structure, accordion configurations, testimonial content, brand assets, and mobile hamburger dimensions.
 2. **Global Styling**: Built custom brand color variables (`--brand-primary`, `--brand-accent`), ambient glowing blur backgrounds, and smooth scroll offsets directly inside a Tailwind CSS v4 environment.
@@ -54,7 +60,7 @@ npm run build
 
 ---
 
-## 🤖 AI Usage & Manual Improvements
+##  AI Usage & Manual Improvements
 
 As requested by the assignment rules, here is the breakdown of AI and manual efforts:
 
@@ -71,7 +77,7 @@ As requested by the assignment rules, here is the breakdown of AI and manual eff
 
 ---
 
-## ⭐ Future Enhancements (With More Time)
+##  Future Enhancements (With More Time)
 - **Database Integration**: Migrate the storage from a local JSON file (`leads.json`) to a production cloud database (such as PostgreSQL via Prisma, or MongoDB) with full ORM schemas.
 - **Authenticating Admins**: Add middleware security (like NextAuth.js or Clerk) to protect the `/admin/leads` path so only verified company managers can access captured customer data.
 - **Automated Email Followups**: Trigger notification mailers (using Resend or Nodemailer) to confirm submission details to both the candidate and the learning sales department.
