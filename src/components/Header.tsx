@@ -76,10 +76,8 @@ export default function Header({ onEnquireClick }: HeaderProps) {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-          isScrolled
-            ? "glassmorphism shadow-md py-3"
-            : "bg-white/95 border-b border-slate-100 py-4"
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 border-b border-slate-100/80 bg-white/75 backdrop-blur-md ${
+          isScrolled ? "shadow-xs py-3" : "py-4.5"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
