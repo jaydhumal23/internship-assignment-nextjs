@@ -46,4 +46,3 @@ npm run build
 ```
 
 ---
-e learning sales department.
