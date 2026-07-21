@@ -45,5 +45,4 @@ Compile the application for deployment or verification:
 npm run build
 ```
 
----
-e learning sales department.
+
