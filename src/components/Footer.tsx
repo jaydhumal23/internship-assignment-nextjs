@@ -118,6 +118,10 @@ export default function Footer() {
             <ArrowUp className="w-3.5 h-3.5" />
           </button>
         </div>
+        <div 
+        className="mt-11  text-xs font-bold text-slate-500 text-center">
+          <span> Jay Dhumal</span>
+        </div>
 
       </div>
     </footer>
