@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Stats from "@/components/Stats";
@@ -15,9 +15,72 @@ import EnquiryModal from "@/components/EnquiryModal";
 
 export default function Home() {
   const [isEnquireModalOpen, setIsEnquireModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
 
   const openEnquireModal = () => setIsEnquireModalOpen(true);
   const closeEnquireModal = () => setIsEnquireModalOpen(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const imageUrls = ["/hero-v2.png", "/cutiepro.png"];
+
+    const preloadImage = (src: string) =>
+      new Promise<void>((resolve) => {
+        const img = new window.Image();
+        img.onload = () => resolve();
+        img.onerror = () => resolve();
+        img.src = src;
+      });
+
+    const preloadAssets = async () => {
+      for (let index = 0; index < imageUrls.length; index += 1) {
+        await preloadImage(imageUrls[index]);
+        if (!cancelled) {
+          setProgress(Math.round(((index + 1) / imageUrls.length) * 100));
+        }
+      }
+
+      if (!cancelled) {
+        setProgress(100);
+        window.setTimeout(() => setIsLoading(false), 300);
+      }
+    };
+
+    const startLoading = () => {
+      void preloadAssets();
+    };
+
+    if (document.readyState === "complete") {
+      startLoading();
+    } else {
+      window.addEventListener("load", startLoading);
+    }
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener("load", startLoading);
+    };
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-800">
+        <div className="flex flex-col items-center text-center px-6">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-slate-300 border-t-blue-600 animate-spin" />
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">
+            Loading
+          </p>
+          <div className="mt-4 h-1.5 w-56 max-w-full overflow-hidden rounded-full bg-slate-200">
+            <div
+              className="h-full rounded-full bg-blue-600 transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

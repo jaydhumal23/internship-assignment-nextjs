@@ -27,6 +27,10 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <link rel="preload" as="image" href="/hero-v2.png" />
+        <link rel="preload" as="image" href="/cutiepro.png" />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

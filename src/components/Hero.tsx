@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { ArrowRight, Check, Zap } from "lucide-react";
 import Image from "next/image";
 
@@ -9,6 +9,8 @@ interface HeroProps {
 }
 
 export default function Hero({ onEnquireClick }: HeroProps) {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
     <section
       id="home"
@@ -84,14 +86,18 @@ export default function Hero({ onEnquireClick }: HeroProps) {
             </div>
 
             {/* Right Column (Professionals Cutout Image aligned to bottom card border) */}
-            <div className="lg:col-span-5 flex justify-center lg:justify-end self-end -mb-4 sm:-mb-8 lg:-mb-10">
+            <div
+              className="lg:col-span-5 flex justify-center lg:justify-end self-end -mb-4 sm:-mb-8 lg:-mb-10"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
               <div className="relative w-full max-w-[460px] sm:max-w-[520px] lg:max-w-[620px] aspect-square lg:aspect-auto lg:h-[440px] xl:h-[500px] flex items-end">
                 <Image
-                  src="/hero-v2.png"
+                  src={isHovered ? "/cutiepro.png" : "/hero-v2.png"}
                   alt="Accredian Enterprise Upskilling Professionals"
                   width={420}
                   height={420}
-                  className="w-full h-auto object-contain mix-blend-multiply scale-[1.1]"
+                  className="w-full h-auto object-contain mix-blend-multiply scale-[1.1] transition-all duration-300 ease-out"
                   priority
                 />
               </div>
