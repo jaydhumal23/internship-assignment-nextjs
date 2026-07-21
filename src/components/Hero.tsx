@@ -12,13 +12,15 @@ interface HeroProps {
 const WORDS_1 = ["Expertise", "Innovation", "Excellence", "Solutions"];
 const WORDS_2 = ["Enterprise", "Workforce", "Business", "Teams"];
 
-function useTypewriter(words: string[], typingSpeed = 80, erasingSpeed = 45, pauseMs = 1800) {
-  const [display, setDisplay] = useState("");
+function useTypewriter(words: string[], typingSpeed = 80, erasingSpeed = 45, pauseMs = 1800, active = true) {
+  // Start with the first word fully typed — no empty-frame flash
+  const [display, setDisplay] = useState(words[0]);
   const [wordIdx, setWordIdx] = useState(0);
-  const [phase, setPhase] = useState<"typing" | "pausing" | "erasing">("typing");
-  const [charIdx, setCharIdx] = useState(0);
+  const [phase, setPhase] = useState<"typing" | "pausing" | "erasing">("pausing");
+  const [charIdx, setCharIdx] = useState(words[0].length);
 
   useEffect(() => {
+    if (!active) return;
     const word = words[wordIdx];
     let timeout: ReturnType<typeof setTimeout>;
 
@@ -45,39 +47,35 @@ function useTypewriter(words: string[], typingSpeed = 80, erasingSpeed = 45, pau
       }
     }
     return () => clearTimeout(timeout);
-  }, [phase, charIdx, wordIdx, words, typingSpeed, erasingSpeed, pauseMs]);
+  }, [phase, charIdx, wordIdx, words, typingSpeed, erasingSpeed, pauseMs, active]);
 
-  // longest word = ghost placeholder width
   const longest = words.reduce((a, b) => (a.length >= b.length ? a : b), "");
   return { display, longest };
 }
 
 function TypewriterWord({ words, delay = 0 }: { words: string[]; delay?: number }) {
-  const [started, setStarted] = useState(false);
+  const [active, setActive] = useState(delay === 0);
+
   useEffect(() => {
-    const t = setTimeout(() => setStarted(true), delay);
+    if (delay === 0) return;
+    const t = setTimeout(() => setActive(true), delay);
     return () => clearTimeout(t);
   }, [delay]);
 
-  const { display, longest } = useTypewriter(started ? words : [words[0]]);
-  const text = started ? display : words[0];
+  const { display, longest } = useTypewriter(words, 80, 45, 1800, active);
 
   return (
-    // Ghost span keeps the width of the longest word so surrounding text never shifts
     <span className="relative inline-block" style={{ verticalAlign: "baseline" }}>
-      {/* Invisible ghost = always full width of longest word */}
-      <span
-        aria-hidden
-        className="invisible select-none font-serif italic font-semibold"
-      >
+      {/* Invisible ghost always holds the width of the longest word */}
+      <span aria-hidden className="invisible select-none font-serif italic font-semibold">
         {longest}
       </span>
-      {/* Visible animated text sits on top */}
+      {/* Animated text layered on top — never affects layout */}
       <span
         className="absolute inset-0 font-serif italic font-semibold bg-gradient-to-r from-[#2A75E6] to-[#4F46E5] bg-clip-text text-transparent"
         aria-live="off"
       >
-        {text}
+        {display}
       </span>
     </span>
   );
