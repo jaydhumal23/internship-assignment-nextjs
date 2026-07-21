@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import clientPromise from "@/lib/mongodb";
 import { validateEnquiryPayload } from "@/utils/validation";
+import { ADMIN_SESSION_COOKIE, verifyAdminToken } from "@/lib/admin-auth";
+
+async function requireAdminSession(req: NextRequest) {
+  const token = req.cookies.get(ADMIN_SESSION_COOKIE)?.value;
+  return verifyAdminToken(token);
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -65,9 +71,8 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    // Authorize administrator session
-    const session = req.cookies.get("admin_session");
-    if (!session || session.value !== "true") {
+    const session = await requireAdminSession(req);
+    if (!session) {
       return NextResponse.json(
         { error: "Unauthorized access. Authentication required." },
         { status: 401 }
@@ -115,9 +120,8 @@ export async function GET(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
-    // Authorize administrator session
-    const session = req.cookies.get("admin_session");
-    if (!session || session.value !== "true") {
+    const session = await requireAdminSession(req);
+    if (!session) {
       return NextResponse.json(
         { error: "Unauthorized access. Authentication required." },
         { status: 401 }

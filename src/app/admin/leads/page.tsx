@@ -94,14 +94,6 @@ export default function AdminLeads() {
   };
 
   useEffect(() => {
-    // Secret URL parameter gate check
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("secret") !== "8282") {
-      // Instantly redirect unauthorized URL discoveries back to homepage
-      window.location.href = "/";
-      return;
-    }
-    
     checkAuth();
   }, []);
 
