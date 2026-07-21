@@ -20,22 +20,37 @@ const pillars = [
 
 const timelineSteps = [
   {
-    number: "01",
+    number: "1",
     title: "Skill Gap Analysis",
-    description: "We work with your engineering and business managers to evaluate current team competency and design learning targets.",
+    description: "Deep dive assessment of your team's existing skill sets to identify key growth areas and critical technology gaps.",
     icon: ClipboardList,
+    theme: {
+      iconBg: "bg-blue-50 border-blue-100/50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-blue-500/20",
+      topLineGrad: "from-blue-500 to-indigo-500",
+      watermark: "group-hover:text-blue-100/30",
+    }
   },
   {
-    number: "02",
+    number: "2",
     title: "Customized Training Plan",
-    description: "Our instructors map out modular syllabi, interactive exercises, and customized code repositories for hands-on learning.",
+    description: "Co-authoring tailored curricula and hand-picking lab sandboxes to align exactly with your team's target tech stack.",
     icon: PenTool,
+    theme: {
+      iconBg: "bg-indigo-50 border-indigo-100/50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-indigo-500/20",
+      topLineGrad: "from-indigo-500 to-purple-500",
+      watermark: "group-hover:text-indigo-100/30",
+    }
   },
   {
-    number: "03",
+    number: "3",
     title: "Flexible Program Delivery",
-    description: "We roll out training cohorts with continuous feedback loops, active mentoring, and post-session code reviews.",
+    description: "Launching cohorts through interactive virtual learning or local classroom bootcamps, complete with assessment tracking.",
     icon: Radio,
+    theme: {
+      iconBg: "bg-emerald-50 border-emerald-100/50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-emerald-500/20",
+      topLineGrad: "from-emerald-500 to-teal-500",
+      watermark: "group-hover:text-emerald-100/30",
+    }
   },
 ];
 
@@ -76,59 +91,59 @@ export default function AccredianEdge() {
         </div>
 
         {/* Delivery Timeline / Process Stepper */}
-        <div className="bg-slate-950 text-white rounded-3xl p-8 sm:p-12 relative overflow-hidden">
+        <div className="bg-gradient-to-br from-slate-100/40 via-white to-blue-50/20 border border-slate-200/50 rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-xs">
           {/* Ambient Glows */}
-          <div className="absolute -top-12 -left-12 w-64 h-64 bg-brand-primary-light/10 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute -top-12 -left-12 w-64 h-64 bg-brand-primary/5 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none" />
 
           {/* Stepper Headline */}
-          <div className="relative mb-12 text-center sm:text-left">
-            <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-3">
-              How We Deliver Results
+          <div className="relative mb-14 text-center">
+            <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-800">
+              How We <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Deliver Results</span> That Matter?
             </h3>
-            <p className="text-sm text-slate-400 max-w-xl leading-relaxed">
-              Our 3-step delivery model is designed to align with corporate training requirements and verify competency milestones.
+            <p className="text-sm text-slate-500 font-semibold tracking-wide mt-2">
+              A Structured Three-Step Approach to Skill Development
             </p>
           </div>
 
-          {/* Desktop/Mobile Process Line */}
-          <div className="relative">
-            {/* Desktop Timeline Line */}
-            <div className="hidden md:block absolute top-[43px] left-[40px] right-[40px] h-0.5 bg-slate-800" />
-            
-            {/* Timeline Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 relative">
-              {timelineSteps.map((step, idx) => {
-                const Icon = step.icon;
-                return (
-                  <div key={idx} className="flex flex-col items-center md:items-start text-center md:text-left group">
+          {/* Timeline Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+            {timelineSteps.map((step, idx) => {
+              const Icon = step.icon;
+              const t = step.theme;
+
+              return (
+                <div key={idx} className="relative flex flex-col h-full">
+                  {/* Card Container - No side borders, subtle top accent bar */}
+                  <div className="bg-white border border-slate-200/60 rounded-2xl p-8 hover:shadow-xl hover:-translate-y-1 transition-all duration-350 group flex flex-col items-start text-left relative overflow-hidden h-full">
                     
-                    {/* Stepper Dot & Number */}
-                    <div className="flex items-center justify-between mb-4 w-full max-w-[200px] md:max-w-none">
-                      <div className="w-14 h-14 rounded-2xl bg-slate-900 border-2 border-slate-700 flex items-center justify-center text-brand-accent transition-all duration-300 group-hover:border-brand-accent group-hover:bg-slate-800 shadow-md">
-                        <Icon className="w-6 h-6" />
-                      </div>
-                      <span className="text-4xl font-black text-slate-800 font-mono tracking-tighter select-none pr-2">
-                        {step.number}
-                      </span>
+                    {/* Top glow accent line that lights up on hover */}
+                    <div className={`absolute top-0 left-0 right-0 h-[3px] bg-transparent group-hover:bg-gradient-to-r ${t.topLineGrad} transition-all duration-300`} />
+
+                    {/* Massive watermark number in top right */}
+                    <div className={`absolute right-6 top-4 text-7xl font-black text-slate-100/90 select-none transition-colors duration-300 ${t.watermark}`}>
+                      0{step.number}
                     </div>
 
-                    {/* Step Title */}
-                    <h4 className="text-lg font-bold text-slate-100 mb-2 group-hover:text-brand-accent transition-colors duration-300">
+                    {/* Rounded icon box - transitions colors on hover */}
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 border transition-all duration-300 ${t.iconBg}`}>
+                      <Icon className="w-5 h-5 stroke-[2.2]" />
+                    </div>
+
+                    {/* Title */}
+                    <h4 className="text-lg font-black text-slate-800 mb-3 group-hover:text-blue-600 transition-colors duration-300">
                       {step.title}
                     </h4>
 
-                    {/* Step Description */}
-                    <p className="text-sm text-slate-400 leading-relaxed max-w-xs">
+                    {/* Description */}
+                    <p className="text-sm text-slate-500 leading-relaxed">
                       {step.description}
                     </p>
-
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
           </div>
-
         </div>
 
       </div>

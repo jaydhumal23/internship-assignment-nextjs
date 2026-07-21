@@ -15,22 +15,21 @@ export default function Hero({ onEnquireClick }: HeroProps) {
       className="relative pt-28 pb-12 sm:pt-32 sm:pb-16 bg-slate-50/50 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Containerized Hero Card */}
         <div className="relative bg-gradient-to-br from-[#EEF5FF] via-white to-[#F8FAFC] rounded-[32px] sm:rounded-[40px] border border-blue-100/55 p-8 sm:p-12 lg:py-16 lg:px-16 shadow-[0_20px_50px_rgba(26,115,232,0.04)] overflow-hidden">
-          
+
           {/* Decorative subtle ambient glows */}
           <div className="absolute top-0 right-0 w-80 h-80 bg-blue-400/5 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-400/5 rounded-full blur-2xl pointer-events-none" />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center relative z-10">
-            
+
             {/* Left Text details */}
             <div className="lg:col-span-7 flex flex-col text-center lg:text-left">
-              
+
               {/* Badge Tag */}
               <div className="inline-flex self-center lg:self-start items-center gap-1.5 px-3.5 py-1.5 bg-blue-600/10 border border-blue-600/20 rounded-full text-blue-600 text-xs font-extrabold uppercase tracking-wider mb-6">
-                <Zap className="w-3.5 h-3.5 fill-current" />
                 Corporate Upskilling Redefined
               </div>
 
@@ -84,15 +83,15 @@ export default function Hero({ onEnquireClick }: HeroProps) {
               </div>
             </div>
 
-            {/* Right Column (Professionals Cutout Image) */}
-            <div className="lg:col-span-5 flex justify-center lg:justify-end self-end">
+            {/* Right Column (Professionals Cutout Image aligned to bottom card border) */}
+            <div className="lg:col-span-5 flex justify-center lg:justify-end self-end -mb-8 sm:-mb-12 lg:-mb-16">
               <div className="relative w-full max-w-[380px] lg:max-w-none aspect-square lg:aspect-auto lg:h-[350px] xl:h-[400px] flex items-end">
                 <Image
-                  src="/hero-banner.png"
+                  src="/hero-v2.png"
                   alt="Accredian Enterprise Upskilling Professionals"
                   width={420}
                   height={420}
-                  className="w-full h-auto object-contain hover:scale-[1.02] transition-transform duration-500"
+                  className="w-full h-auto object-contain mix-blend-multiply"
                   priority
                 />
               </div>

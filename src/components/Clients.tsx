@@ -2,6 +2,68 @@
 
 import React from "react";
 
+const logoItems = [
+  // Reliance
+  (
+    <div key="reliance" className="h-12 flex items-center justify-center filter grayscale contrast-200 hover:grayscale-0 hover:contrast-100 transition-all duration-300 shrink-0">
+      <span className="text-lg font-black tracking-tight text-blue-900 flex items-center gap-1 whitespace-nowrap">
+        <span className="w-4.5 h-4.5 rounded-full bg-red-600 inline-block border-2 border-yellow-400" />
+        RELIANCE
+      </span>
+    </div>
+  ),
+  // HCL
+  (
+    <div key="hcl" className="h-12 flex items-center justify-center filter grayscale contrast-200 hover:grayscale-0 hover:contrast-100 transition-all duration-300 shrink-0">
+      <span className="text-xl font-black tracking-tighter text-blue-800 whitespace-nowrap">
+        HCL <span className="text-blue-500 font-normal">Tech</span>
+      </span>
+    </div>
+  ),
+  // IBM
+  (
+    <div key="ibm" className="h-12 flex items-center justify-center filter grayscale contrast-200 hover:grayscale-0 hover:contrast-100 transition-all duration-300 shrink-0">
+      <svg className="h-6 w-auto fill-blue-700" viewBox="0 0 100 40">
+        <rect x="0" y="2" width="100" height="2" />
+        <rect x="0" y="7" width="100" height="2" />
+        <rect x="0" y="12" width="100" height="2" />
+        <rect x="0" y="17" width="100" height="2" />
+        <rect x="0" y="22" width="100" height="2" />
+        <rect x="0" y="27" width="100" height="2" />
+        <rect x="0" y="32" width="100" height="2" />
+        <rect x="0" y="37" width="100" height="2" />
+        <text x="5" y="31" fontFamily="sans-serif" fontSize="34" fontWeight="900" fill="none" stroke="white" strokeWidth="8">IBM</text>
+        <text x="5" y="31" fontFamily="sans-serif" fontSize="34" fontWeight="900">IBM</text>
+      </svg>
+    </div>
+  ),
+  // CRIF
+  (
+    <div key="crif" className="h-12 flex items-center justify-center filter grayscale contrast-200 hover:grayscale-0 hover:contrast-100 transition-all duration-300 shrink-0">
+      <span className="text-xl font-extrabold tracking-widest text-slate-800 flex items-center whitespace-nowrap">
+        CRIF<span className="text-blue-600">.</span>
+      </span>
+    </div>
+  ),
+  // ADP
+  (
+    <div key="adp" className="h-12 flex items-center justify-center filter grayscale contrast-200 hover:grayscale-0 hover:contrast-100 transition-all duration-300 shrink-0">
+      <span className="text-2xl font-black italic tracking-tighter text-red-600 whitespace-nowrap">
+        ADP
+      </span>
+    </div>
+  ),
+  // Bayer
+  (
+    <div key="bayer" className="h-12 flex items-center justify-center filter grayscale contrast-200 hover:grayscale-0 hover:contrast-100 transition-all duration-300 shrink-0">
+      <div className="flex items-center gap-1.5 border border-slate-300 px-3 py-1.5 rounded-full bg-white shadow-xs whitespace-nowrap">
+        <span className="w-5 h-5 rounded-full bg-cyan-500 flex items-center justify-center text-[10px] text-white font-black">B</span>
+        <span className="text-xs font-bold text-slate-800">BAYER</span>
+      </div>
+    </div>
+  ),
+];
+
 export default function Clients() {
   return (
     <section id="clients" className="py-16 bg-slate-50 border-b border-slate-100 scroll-mt-20 overflow-hidden">
@@ -20,63 +82,37 @@ export default function Clients() {
           </p>
         </div>
 
-        {/* Brand Grid */}
-        <div className="relative w-full">
-          {/* Logo container wrapper for horizontal display */}
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-8 items-center justify-items-center opacity-75">
+        {/* Brand Marquee Flow */}
+        <div className="relative w-full overflow-hidden mask-fade-edges mt-4">
+          
+          <style>{`
+            @keyframes marquee {
+              0% {
+                transform: translateX(0%);
+              }
+              100% {
+                transform: translateX(-50%);
+              }
+            }
+            .animate-marquee {
+              animation: marquee 25s linear infinite;
+            }
+            .mask-fade-edges {
+              mask-image: linear-gradient(to right, transparent, white 15%, white 85%, transparent);
+              -webkit-mask-image: linear-gradient(to right, transparent, white 15%, white 85%, transparent);
+            }
+          `}</style>
+
+          <div className="flex items-center gap-16 w-max animate-marquee py-2 opacity-75">
             
-            {/* Reliance */}
-            <div className="h-12 flex items-center justify-center filter grayscale contrast-200 hover:grayscale-0 hover:contrast-100 transition-all duration-300">
-              <span className="text-lg font-black tracking-tight text-blue-900 flex items-center gap-1">
-                <span className="w-4.5 h-4.5 rounded-full bg-red-600 inline-block border-2 border-yellow-400" />
-                RELIANCE
-              </span>
+            {/* Set 1 */}
+            <div className="flex items-center gap-16 shrink-0">
+              {logoItems}
             </div>
 
-            {/* HCL */}
-            <div className="h-12 flex items-center justify-center filter grayscale contrast-200 hover:grayscale-0 hover:contrast-100 transition-all duration-300">
-              <span className="text-xl font-black tracking-tighter text-blue-800">
-                HCL <span className="text-blue-500 font-normal">Tech</span>
-              </span>
-            </div>
-
-            {/* IBM */}
-            <div className="h-12 flex items-center justify-center filter grayscale contrast-200 hover:grayscale-0 hover:contrast-100 transition-all duration-300">
-              <svg className="h-6 w-auto fill-blue-700" viewBox="0 0 100 40">
-                <rect x="0" y="2" width="100" height="2" />
-                <rect x="0" y="7" width="100" height="2" />
-                <rect x="0" y="12" width="100" height="2" />
-                <rect x="0" y="17" width="100" height="2" />
-                <rect x="0" y="22" width="100" height="2" />
-                <rect x="0" y="27" width="100" height="2" />
-                <rect x="0" y="32" width="100" height="2" />
-                <rect x="0" y="37" width="100" height="2" />
-                {/* Overlay clip shapes for letters I, B, M */}
-                <text x="5" y="31" fontFamily="sans-serif" fontSize="34" fontWeight="900" fill="none" stroke="white" strokeWidth="8">IBM</text>
-                <text x="5" y="31" fontFamily="sans-serif" fontSize="34" fontWeight="900">IBM</text>
-              </svg>
-            </div>
-
-            {/* CRIF */}
-            <div className="h-12 flex items-center justify-center filter grayscale contrast-200 hover:grayscale-0 hover:contrast-100 transition-all duration-300">
-              <span className="text-xl font-extrabold tracking-widest text-slate-800 flex items-center">
-                CRIF<span className="text-brand-accent">.</span>
-              </span>
-            </div>
-
-            {/* ADP */}
-            <div className="h-12 flex items-center justify-center filter grayscale contrast-200 hover:grayscale-0 hover:contrast-100 transition-all duration-300">
-              <span className="text-2xl font-black italic tracking-tighter text-red-600">
-                ADP
-              </span>
-            </div>
-
-            {/* Bayer */}
-            <div className="h-12 flex items-center justify-center filter grayscale contrast-200 hover:grayscale-0 hover:contrast-100 transition-all duration-300">
-              <div className="flex items-center gap-1.5 border border-slate-300 px-3 py-1.5 rounded-full bg-white shadow-xs">
-                <span className="w-5 h-5 rounded-full bg-cyan-500 flex items-center justify-center text-[10px] text-white font-black">B</span>
-                <span className="text-xs font-bold text-slate-800">BAYER</span>
-              </div>
+            {/* Set 2 (Duplicate for seamless continuous loop) */}
+            <div className="flex items-center gap-16 shrink-0" aria-hidden="true">
+              {logoItems.map((logo, index) => React.cloneElement(logo, { key: `dup-${index}` }))}
             </div>
 
           </div>

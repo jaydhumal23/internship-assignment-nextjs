@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Quote, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 
 const testimonials = [
   {
@@ -68,8 +68,7 @@ export default function Testimonials() {
         
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-brand-accent/15 border border-brand-accent/20 rounded-full text-brand-accent text-xs font-bold uppercase tracking-wider mb-4">
-            <Sparkles className="w-3.5 h-3.5 fill-current" />
+          <div className="inline-flex items-center px-3.5 py-1 bg-brand-accent/15 border border-brand-accent/20 rounded-full text-brand-accent text-xs font-bold uppercase tracking-wider mb-4">
             Impact Stories
           </div>
           <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">

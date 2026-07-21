@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Terminal, Database, Shield, BarChart, Settings, Rocket, Cpu, Eye, Users, TrendingUp } from "lucide-react";
+import { Terminal, Database, Shield, BarChart, Settings, Rocket, Cpu, Eye, Users, TrendingUp, Lightbulb, Laptop } from "lucide-react";
 
 type TabId = "tech" | "non-tech" | "emerging" | "senior";
 
@@ -45,22 +45,19 @@ const domainData = {
 
 const catFramework = [
   {
-    letter: "C",
     title: "Concept",
-    desc: "Laying the foundations. Classroom theory, code-walkthroughs, and structural blueprints lead by seasoned industry experts.",
-    colorClass: "bg-blue-50 border-blue-200 text-blue-700",
+    desc: "Foundational knowledge for deep subject understanding.",
+    icon: Lightbulb,
   },
   {
-    letter: "A",
     title: "Application",
-    desc: "Translating words into code. Live virtual sandbox environments, homework repositories, and interactive group sprints.",
-    colorClass: "bg-emerald-50 border-emerald-200 text-emerald-700",
+    desc: "Practical implementation through real-world scenarios.",
+    icon: Laptop,
   },
   {
-    letter: "T",
-    title: "Transformation",
-    desc: "Realizing output. Rigorous final assessments, project code reviews, and comprehensive capability dashboard summaries.",
-    colorClass: "bg-purple-50 border-purple-200 text-purple-700",
+    title: "Tools",
+    desc: "Resources and techniques for effective skill mastery.",
+    icon: Settings,
   },
 ];
 
@@ -130,44 +127,73 @@ export default function DomainExpertise() {
         </div>
 
         {/* CAT Framework Section */}
-        <div className="mt-12">
+        <div className="mt-20">
           {/* CAT Headings */}
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <p className="text-xs font-bold text-brand-primary-light uppercase tracking-widest">
-              Execution Methodology
-            </p>
-            <h2 className="text-3xl font-black text-slate-900 sm:text-4xl tracking-tight mt-2">
-              The CAT Framework
+            <h2 className="text-3xl font-black text-slate-900 sm:text-4xl tracking-tight">
+              The <span className="text-blue-600">CAT</span> Framework
             </h2>
-            <p className="text-slate-500 mt-3 text-sm sm:text-base leading-relaxed">
-              We structure all cohorts around the <strong>Concept-Application-Transformation</strong> path, ensuring concepts map to production outputs.
+            <p className="text-slate-500 mt-2 text-sm sm:text-base font-semibold">
+              Our Proven Approach to Learning Excellence
             </p>
           </div>
 
           {/* CAT Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {catFramework.map((item, idx) => (
-              <div
-                key={idx}
-                className="bg-white border border-slate-150 rounded-2xl p-8 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative group flex flex-col"
-              >
-                {/* Visual Letter Logo Badge */}
-                <div
-                  className={`absolute -top-6 left-8 w-12 h-12 rounded-xl border flex items-center justify-center text-xl font-black shadow-md ${item.colorClass}`}
-                >
-                  {item.letter}
-                </div>
+          <div className="relative mt-16 max-w-5xl mx-auto px-4">
+            
+            {/* Desktop continuous SVG connection path */}
+            <div className="absolute inset-0 pointer-events-none hidden lg:block overflow-visible">
+              <svg className="w-full h-full" viewBox="0 0 900 350" fill="none">
+                {/* S-wave path running from step 1 center to step 2 center to step 3 center */}
+                <path
+                  d="M 150,175 C 320,175 320,70 450,70 C 580,70 580,280 750,280"
+                  stroke="#1A73E8"
+                  strokeWidth="3.5"
+                  strokeDasharray="8 6"
+                  strokeLinecap="round"
+                  className="opacity-60"
+                />
+                <circle cx="150" cy="175" r="5" fill="#1A73E8" />
+                <circle cx="750" cy="280" r="5" fill="#1A73E8" />
+              </svg>
+            </div>
 
-                <div className="mt-4">
-                  <h3 className="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm text-slate-500 leading-relaxed">
-                    {item.desc}
-                  </p>
-                </div>
-              </div>
-            ))}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 relative z-10 justify-items-center">
+              {catFramework.map((item, idx) => {
+                const Icon = item.icon;
+                
+                // Position offsets on desktop to align with the S-wave
+                const positionClass = idx === 0 
+                  ? "lg:-translate-y-8" 
+                  : idx === 1 
+                  ? "lg:translate-y-0" 
+                  : "lg:translate-y-8";
+
+                return (
+                  <div
+                    key={idx}
+                    className={`w-64 h-64 sm:w-72 sm:h-72 rounded-full border-4 border-blue-600/35 bg-white flex flex-col items-center justify-center p-6 text-center shadow-xs hover:shadow-xl hover:border-blue-600 hover:scale-105 transition-all duration-500 relative group ${positionClass}`}
+                  >
+                    {/* Floating Step Number */}
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-2.5 py-0.5 bg-blue-600 text-white text-[10px] font-extrabold uppercase rounded-full shadow-xs">
+                      Step 0{idx + 1}
+                    </div>
+
+                    <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                      <Icon className="w-6 h-6 stroke-[2]" />
+                    </div>
+
+                    <h4 className="text-lg font-black text-slate-800 mb-2.5 group-hover:text-blue-600 transition-colors duration-300">
+                      {item.title}
+                    </h4>
+
+                    <p className="text-xs sm:text-sm text-slate-550 leading-relaxed max-w-[200px]">
+                      {item.desc}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 

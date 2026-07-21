@@ -28,6 +28,11 @@
   --animate-slide-up: slide-up 0.8s ease-out;
   --animate-pulse-subtle: pulse-subtle 2s infinite ease-in-out;
   --animate-infinite-scroll: infinite-scroll 25s linear infinite;
+  --animate-float-slow: float-slow 22s infinite ease-in-out;
+  --animate-float-reverse: float-reverse 26s infinite ease-in-out;
+  --animate-beam-slow-1: beam-slow 16s infinite linear;
+  --animate-beam-slow-2: beam-slow 20s infinite linear 3s;
+  --animate-beam-slow-3: beam-slow 24s infinite linear 6s;
 
   @keyframes fade-in {
     from { opacity: 0; }
@@ -45,6 +50,20 @@
     from { transform: translateX(0); }
     to { transform: translateX(-50%); }
   }
+  @keyframes float-slow {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(60px, -40px) scale(1.08); }
+  }
+  @keyframes float-reverse {
+    0%, 100% { transform: translate(0, 0) scale(1.1); }
+    50% { transform: translate(-50px, 50px) scale(0.92); }
+  }
+  @keyframes beam-slow {
+    0% { transform: translateY(-10%); opacity: 0; }
+    5% { opacity: 1; }
+    95% { opacity: 1; }
+    100% { transform: translateY(110%); opacity: 0; }
+  }
 }
 
 html {
@@ -56,6 +75,8 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans);
+  /* Prevents page-wide layout shift when scrollbar appears/disappears */
+  scrollbar-gutter: stable;
 }
 
 /* Custom scrollbar to make the site look extremely premium */

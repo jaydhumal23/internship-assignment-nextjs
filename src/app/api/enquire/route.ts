@@ -1,43 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
-
-// Path to store lead JSON data
-const DATA_DIR = path.join(process.cwd(), "data");
-const FILE_PATH = path.join(DATA_DIR, "leads.json");
+import { ObjectId } from "mongodb";
+import clientPromise from "@/lib/mongodb";
+import { validateEnquiryPayload } from "@/utils/validation";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { name, email, countryCode, phone, company, domain, candidates, deliveryMode, city, country } = body;
 
-    // Server-side validation
-    if (!name || !email || !countryCode || !phone || !company || !domain || !candidates || !deliveryMode || !city || !country) {
+    // Server-side validation using shared utility library
+    const validation = validateEnquiryPayload(body);
+    if (!validation.isValid) {
+      const firstKey = Object.keys(validation.errors)[0];
       return NextResponse.json(
-        { error: "All required fields must be filled out." },
+        { error: validation.errors[firstKey] },
         { status: 400 }
       );
     }
 
-    // Email validation
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json(
-        { error: "Invalid email format." },
-        { status: 400 }
-      );
-    }
-
-    // Phone validation
-    if (!/^[0-9\s-()]{7,12}$/.test(phone)) {
-      return NextResponse.json(
-        { error: "Invalid phone number format. It should contain between 7 and 12 digits." },
-        { status: 400 }
-      );
-    }
-
-    // Initialize lead object
     const newLead = {
-      id: `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       name: name.trim(),
       email: email.trim().toLowerCase(),
       countryCode,
@@ -48,34 +29,30 @@ export async function POST(req: NextRequest) {
       deliveryMode,
       city: city.trim(),
       country: country.trim(),
+      status: "In Talk", // Default initial sales status
       createdAt: new Date().toISOString(),
     };
 
-    // Ensure data directory exists
-    if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
+    if (!clientPromise) {
+      return NextResponse.json(
+        { error: "Database configuration error. MongoDB URI not set." },
+        { status: 500 }
+      );
     }
 
-    // Read current leads or initialize empty array
-    let leads = [];
-    if (fs.existsSync(FILE_PATH)) {
-      try {
-        const fileContent = fs.readFileSync(FILE_PATH, "utf-8");
-        leads = JSON.parse(fileContent || "[]");
-      } catch (e) {
-        // In case JSON is corrupt
-        leads = [];
-      }
-    }
-
-    // Append new lead
-    leads.unshift(newLead); // Add to the top of list
-
-    // Write back to file
-    fs.writeFileSync(FILE_PATH, JSON.stringify(leads, null, 2), "utf-8");
+    const client = await clientPromise;
+    const db = client.db();
+    const collection = db.collection("leads");
+    
+    const result = await collection.insertOne(newLead);
+    const mongoLeadId = result.insertedId.toString();
 
     return NextResponse.json(
-      { success: true, message: "Enquiry logged successfully.", leadId: newLead.id },
+      { 
+        success: true, 
+        message: "Enquiry saved to MongoDB.", 
+        leadId: mongoLeadId
+      },
       { status: 201 }
     );
   } catch (error) {
@@ -87,18 +64,128 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    if (!fs.existsSync(FILE_PATH)) {
-      return NextResponse.json([]);
+    // Authorize administrator session
+    const session = req.cookies.get("admin_session");
+    if (!session || session.value !== "true") {
+      return NextResponse.json(
+        { error: "Unauthorized access. Authentication required." },
+        { status: 401 }
+      );
     }
-    const fileContent = fs.readFileSync(FILE_PATH, "utf-8");
-    const leads = JSON.parse(fileContent || "[]");
-    return NextResponse.json(leads);
+
+    if (!clientPromise) {
+      return NextResponse.json(
+        { error: "Database configuration error. MongoDB URI not set." },
+        { status: 500 }
+      );
+    }
+
+    const client = await clientPromise;
+    const db = client.db();
+    const collection = db.collection("leads");
+    
+    const leads = await collection.find({}).sort({ createdAt: -1 }).toArray();
+    
+    // Map _id object to id string for frontend ease
+    const formattedLeads = leads.map(lead => ({
+      id: lead._id.toString(),
+      name: lead.name,
+      email: lead.email,
+      countryCode: lead.countryCode,
+      phone: lead.phone,
+      company: lead.company,
+      domain: lead.domain,
+      candidates: lead.candidates,
+      deliveryMode: lead.deliveryMode,
+      city: lead.city,
+      country: lead.country,
+      status: lead.status || "In Talk", // Default for legacy data
+      createdAt: lead.createdAt
+    }));
+
+    return NextResponse.json(formattedLeads);
   } catch (error) {
     console.error("API error during getting enquiries:", error);
     return NextResponse.json(
       { error: "Internal server error. Failed to load enquiries." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    // Authorize administrator session
+    const session = req.cookies.get("admin_session");
+    if (!session || session.value !== "true") {
+      return NextResponse.json(
+        { error: "Unauthorized access. Authentication required." },
+        { status: 401 }
+      );
+    }
+
+    const body = await req.json();
+    const { id, status } = body;
+
+    if (!id || !status) {
+      return NextResponse.json(
+        { error: "Missing required fields: id and status." },
+        { status: 400 }
+      );
+    }
+
+    const allowedStatuses = ["In Talk", "Moved Forward", "Rejected"];
+    if (!allowedStatuses.includes(status)) {
+      return NextResponse.json(
+        { error: "Invalid status value." },
+        { status: 400 }
+      );
+    }
+
+    if (!clientPromise) {
+      return NextResponse.json(
+        { error: "Database configuration error. MongoDB URI not set." },
+        { status: 500 }
+      );
+    }
+
+    const client = await clientPromise;
+    const db = client.db();
+    const collection = db.collection("leads");
+
+    // Convert string ID to MongoDB ObjectId safely
+    let objectId;
+    try {
+      objectId = new ObjectId(id);
+    } catch (err) {
+      return NextResponse.json(
+        { error: "Invalid lead ID format." },
+        { status: 400 }
+      );
+    }
+
+    const result = await collection.updateOne(
+      { _id: objectId },
+      { $set: { status } }
+    );
+
+    if (result.matchedCount === 0) {
+      return NextResponse.json(
+        { error: "Lead enquiry record not found." },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ 
+      success: true, 
+      message: "Lead status updated successfully." 
+    });
+  } catch (error) {
+    console.error("API error during lead status update:", error);
+    return NextResponse.json(
+      { error: "Internal server error. Failed to update lead status." },
       { status: 500 }
     );
   }

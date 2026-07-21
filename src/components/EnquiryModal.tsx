@@ -2,11 +2,116 @@
 
 import React, { useState, useEffect } from "react";
 import { X, Send, CheckCircle2, AlertCircle } from "lucide-react";
+import { validateEnquiryPayload } from "@/utils/validation";
 
 interface EnquiryModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+// Complete list of global country codes
+const countryCodes = [
+  { code: "+91", label: "IN (+91)", name: "India" },
+  { code: "+1", label: "US/CA (+1)", name: "United States/Canada" },
+  { code: "+44", label: "UK (+44)", name: "United Kingdom" },
+  { code: "+61", label: "AU (+61)", name: "Australia" },
+  { code: "+65", label: "SG (+65)", name: "Singapore" },
+  { code: "+971", label: "AE (+971)", name: "United Arab Emirates" },
+  { code: "+49", label: "DE (+49)", name: "Germany" },
+  { code: "+33", label: "FR (+33)", name: "France" },
+  { code: "+81", label: "JP (+81)", name: "Japan" },
+  { code: "+31", label: "NL (+31)", name: "Netherlands" },
+  { code: "+39", label: "IT (+39)", name: "Italy" },
+  { code: "+34", label: "ES (+34)", name: "Spain" },
+  { code: "+41", label: "CH (+41)", name: "Switzerland" },
+  { code: "+46", label: "SE (+46)", name: "Sweden" },
+  { code: "+47", label: "NO (+47)", name: "Norway" },
+  { code: "+45", label: "DK (+45)", name: "Denmark" },
+  { code: "+358", label: "FI (+358)", name: "Finland" },
+  { code: "+353", label: "IE (+353)", name: "Ireland" },
+  { code: "+32", label: "BE (+32)", name: "Belgium" },
+  { code: "+43", label: "AT (+43)", name: "Austria" },
+  { code: "+64", label: "NZ (+64)", name: "New Zealand" },
+  { code: "+852", label: "HK (+852)", name: "Hong Kong" },
+  { code: "+82", label: "KR (+82)", name: "South Korea" },
+  { code: "+86", label: "CN (+86)", name: "China" },
+  { code: "+60", label: "MY (+60)", name: "Malaysia" },
+  { code: "+62", label: "ID (+62)", name: "Indonesia" },
+  { code: "+66", label: "TH (+66)", name: "Thailand" },
+  { code: "+63", label: "PH (+63)", name: "Philippines" },
+  { code: "+84", label: "VN (+84)", name: "Vietnam" },
+  { code: "+90", label: "TR (+90)", name: "Turkey" },
+  { code: "+966", label: "SA (+966)", name: "Saudi Arabia" },
+  { code: "+974", label: "QA (+974)", name: "Qatar" },
+  { code: "+965", label: "KW (+965)", name: "Kuwait" },
+  { code: "+968", label: "OM (+968)", name: "Oman" },
+  { code: "+973", label: "BH (+973)", name: "Bahrain" },
+  { code: "+972", label: "IL (+972)", name: "Israel" },
+  { code: "+27", label: "ZA (+27)", name: "South Africa" },
+  { code: "+20", label: "EG (+20)", name: "Egypt" },
+  { code: "+234", label: "NG (+234)", name: "Nigeria" },
+  { code: "+254", label: "KE (+254)", name: "Kenya" },
+  { code: "+212", label: "MA (+212)", name: "Morocco" },
+  { code: "+55", label: "BR (+55)", name: "Brazil" },
+  { code: "+52", label: "MX (+52)", name: "Mexico" },
+  { code: "+54", label: "AR (+54)", name: "Argentina" },
+  { code: "+56", label: "CL (+56)", name: "Chile" },
+  { code: "+57", label: "CO (+57)", name: "Colombia" },
+  { code: "+51", label: "PE (+51)", name: "Peru" },
+  { code: "+7", label: "RU (+7)", name: "Russia" },
+  { code: "+380", label: "UA (+380)", name: "Ukraine" },
+  { code: "+48", label: "PL (+48)", name: "Poland" },
+  { code: "+420", label: "CZ (+420)", name: "Czech Republic" },
+  { code: "+36", label: "HU (+36)", name: "Hungary" },
+  { code: "+40", label: "RO (+40)", name: "Romania" },
+  { code: "+30", label: "GR (+30)", name: "Greece" },
+  { code: "+351", label: "PT (+351)", name: "Portugal" },
+  { code: "+92", label: "PK (+92)", name: "Pakistan" },
+  { code: "+880", label: "BD (+880)", name: "Bangladesh" },
+  { code: "+94", label: "LK (+94)", name: "Sri Lanka" },
+  { code: "+977", label: "NP (+977)", name: "Nepal" },
+  { code: "+95", label: "MM (+95)", name: "Myanmar" },
+  { code: "+886", label: "TW (+886)", name: "Taiwan" },
+  { code: "+381", label: "RS (+381)", name: "Serbia" },
+  { code: "+385", label: "HR (+385)", name: "Croatia" },
+  { code: "+359", label: "BG (+359)", name: "Bulgaria" },
+  { code: "+370", label: "LT (+370)", name: "Lithuania" },
+  { code: "+371", label: "LV (+371)", name: "Latvia" },
+  { code: "+372", label: "EE (+372)", name: "Estonia" },
+  { code: "+352", label: "LU (+352)", name: "Luxembourg" },
+  { code: "+354", label: "IS (+354)", name: "Iceland" },
+  { code: "+356", label: "MT (+356)", name: "Malta" },
+  { code: "+386", label: "SI (+386)", name: "Slovenia" },
+  { code: "+382", label: "ME (+382)", name: "Montenegro" },
+  { code: "+389", label: "MK (+389)", name: "North Macedonia" },
+  { code: "+355", label: "AL (+355)", name: "Albania" },
+  { code: "+376", label: "AD (+376)", name: "Andorra" },
+  { code: "+506", label: "CR (+506)", name: "Costa Rica" },
+  { code: "+507", label: "PA (+507)", name: "Panama" },
+  { code: "+502", label: "GT (+502)", name: "Guatemala" },
+  { code: "+503", label: "SV (+503)", name: "El Salvador" },
+  { code: "+504", label: "HN (+504)", name: "Honduras" },
+  { code: "+505", label: "NI (+505)", name: "Nicaragua" },
+  { code: "+591", label: "BO (+591)", name: "Bolivia" },
+  { code: "+593", label: "EC (+593)", name: "Ecuador" },
+  { code: "+595", label: "PY (+595)", name: "Paraguay" },
+  { code: "+598", label: "UY (+598)", name: "Uruguay" },
+  { code: "+58", label: "VE (+58)", name: "Venezuela" }
+];
+
+// Pre-defined list of countries and their major business cities for corporate training
+const countriesData: Record<string, string[]> = {
+  "India": ["Bengaluru", "Mumbai", "Delhi NCR", "Pune", "Hyderabad", "Chennai", "Other"],
+  "United States": ["New York", "San Francisco", "Chicago", "Austin", "Seattle", "Boston", "Other"],
+  "United Kingdom": ["London", "Manchester", "Birmingham", "Edinburgh", "Other"],
+  "Australia": ["Sydney", "Melbourne", "Brisbane", "Perth", "Other"],
+  "Singapore": ["Singapore", "Other"],
+  "United Arab Emirates": ["Dubai", "Abu Dhabi", "Other"],
+  "Germany": ["Berlin", "Munich", "Frankfurt", "Hamburg", "Other"],
+  "France": ["Paris", "Lyon", "Marseille", "Other"],
+  "Japan": ["Tokyo", "Osaka", "Kyoto", "Other"],
+  "Other": ["Other"]
+};
 
 export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
   const [formData, setFormData] = useState({
@@ -18,9 +123,13 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
     domain: "Tech",
     candidates: "10-50",
     deliveryMode: "Live Virtual",
-    city: "",
-    country: "",
+    country: "India",
+    city: "Bengaluru",
   });
+
+  const [customCountry, setCustomCountry] = useState("");
+  const [customCity, setCustomCity] = useState("");
+  const [customDomain, setCustomDomain] = useState("");
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,32 +151,47 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
   if (!isOpen) return null;
 
   const validate = () => {
-    const newErrors: Record<string, string> = {};
-    if (!formData.name.trim()) newErrors.name = "Full name is required";
-    
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
+    const finalCountry = formData.country === "Other" ? customCountry.trim() : formData.country;
+    const finalCity = (formData.city === "Other" || formData.country === "Other") ? customCity.trim() : formData.city;
+    const finalDomain = formData.domain === "Other" ? customDomain.trim() : formData.domain;
+
+    const validation = validateEnquiryPayload({
+      ...formData,
+      domain: finalDomain,
+      country: finalCountry,
+      city: finalCity
+    });
+
+    const clientErrors: Record<string, string> = { ...validation.errors };
+
+    // Remap custom field errors to custom visual inputs in client UI
+    if (formData.country === "Other" && validation.errors.country) {
+      clientErrors.customCountry = validation.errors.country;
+      delete clientErrors.country;
     }
-    
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required";
-    } else if (!/^[0-9\s-()]{7,12}$/.test(formData.phone.trim())) {
-      newErrors.phone = "Please enter a valid phone number (7-12 digits)";
+    if ((formData.city === "Other" || formData.country === "Other") && validation.errors.city) {
+      clientErrors.customCity = validation.errors.city;
+      delete clientErrors.city;
     }
-    
-    if (!formData.company.trim()) newErrors.company = "Company name is required";
-    if (!formData.city.trim()) newErrors.city = "City is required";
-    if (!formData.country.trim()) newErrors.country = "Country is required";
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    if (formData.domain === "Other" && validation.errors.domain) {
+      clientErrors.customDomain = "Please specify your domain of interest";
+      delete clientErrors.domain;
+    }
+
+    setErrors(clientErrors);
+    return Object.keys(clientErrors).length === 0;
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    let processedValue = value;
+
+    if (name === "phone") {
+      // Keep only numbers and restrict to 10 digits maximum
+      processedValue = value.replace(/\D/g, "").slice(0, 10);
+    }
+
+    setFormData((prev) => ({ ...prev, [name]: processedValue }));
     if (errors[name]) {
       setErrors((prev) => {
         const copy = { ...prev };
@@ -77,6 +201,26 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
     }
   };
 
+  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedCountry = e.target.value;
+    const defaultCity = countriesData[selectedCountry]?.[0] || "Other";
+    setFormData((prev) => ({
+      ...prev,
+      country: selectedCountry,
+      city: defaultCity
+    }));
+
+    // Clear validation errors for city/country selectors
+    setErrors((prev) => {
+      const copy = { ...prev };
+      delete copy.country;
+      delete copy.city;
+      delete copy.customCountry;
+      delete copy.customCity;
+      return copy;
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
@@ -84,11 +228,29 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
     setIsSubmitting(true);
     setSubmitStatus("idle");
 
+    // Resolve final names
+    const finalCountry = formData.country === "Other" ? customCountry.trim() : formData.country;
+    const finalCity = (formData.city === "Other" || formData.country === "Other") ? customCity.trim() : formData.city;
+    const finalDomain = formData.domain === "Other" ? customDomain.trim() : formData.domain;
+
+    const payload = {
+      name: formData.name,
+      email: formData.email,
+      countryCode: formData.countryCode,
+      phone: formData.phone,
+      company: formData.company,
+      domain: finalDomain,
+      candidates: formData.candidates,
+      deliveryMode: formData.deliveryMode,
+      country: finalCountry,
+      city: finalCity
+    };
+
     try {
       const response = await fetch("/api/enquire", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
@@ -104,9 +266,12 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
           domain: "Tech",
           candidates: "10-50",
           deliveryMode: "Live Virtual",
-          city: "",
-          country: "",
+          country: "India",
+          city: "Bengaluru",
         });
+        setCustomCountry("");
+        setCustomCity("");
+        setCustomDomain("");
       } else {
         setSubmitStatus("error");
         setErrorMessage(data.error || "Failed to submit enquiry. Please try again.");
@@ -118,6 +283,9 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
       setIsSubmitting(false);
     }
   };
+
+  const showCustomCountryInput = formData.country === "Other";
+  const showCustomCityInput = formData.city === "Other" || formData.country === "Other";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
@@ -203,22 +371,18 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                   <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
                     Phone Number <span className="text-red-500">*</span>
                   </label>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 min-w-0">
                     <select
                       name="countryCode"
                       value={formData.countryCode}
                       onChange={handleChange}
-                      className="px-2 py-2 border border-slate-200 rounded-lg text-slate-850 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary-light/20 focus:border-brand-primary-light bg-white shrink-0 w-24"
+                      className="px-2 py-2 border border-slate-200 rounded-lg text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary-light/20 focus:border-brand-primary-light bg-white shrink-0 w-24 overflow-y-auto"
                     >
-                      <option value="+91">IN (+91)</option>
-                      <option value="+1">US (+1)</option>
-                      <option value="+44">UK (+44)</option>
-                      <option value="+61">AU (+61)</option>
-                      <option value="+65">SG (+65)</option>
-                      <option value="+971">AE (+971)</option>
-                      <option value="+49">DE (+49)</option>
-                      <option value="+33">FR (+33)</option>
-                      <option value="+81">JP (+81)</option>
+                      {countryCodes.map((c) => (
+                        <option key={`${c.code}-${c.label}`} value={c.code}>
+                          {c.label}
+                        </option>
+                      ))}
                     </select>
                     <input
                       type="tel"
@@ -226,7 +390,7 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                       value={formData.phone}
                       onChange={handleChange}
                       placeholder="98765 43210"
-                      className={`flex-grow px-3 py-2 border rounded-lg text-slate-800 text-sm focus:outline-none focus:ring-2 transition-all ${
+                      className={`flex-1 min-w-0 px-3 py-2 border rounded-lg text-slate-800 text-sm focus:outline-none focus:ring-2 transition-all ${
                         errors.phone ? "border-red-300 focus:ring-red-100" : "border-slate-200 focus:ring-brand-primary-light/20 focus:border-brand-primary-light"
                       }`}
                     />
@@ -263,13 +427,41 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                     name="domain"
                     value={formData.domain}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary-light/20 focus:border-brand-primary-light transition-all"
+                    className={`w-full px-3 py-2 border rounded-lg text-slate-800 text-sm focus:outline-none focus:ring-2 bg-white transition-all ${
+                      errors.domain ? "border-red-300 focus:ring-red-100" : "border-slate-200 focus:ring-brand-primary-light/20 focus:border-brand-primary-light"
+                    }`}
                   >
-                    <option value="Tech">Tech (Software, Cloud, DevOps)</option>
-                    <option value="Non-Tech">Non-Tech (Product, Analytics)</option>
-                    <option value="Emerging">Emerging Tech (GenAI, ML, Data Science)</option>
-                    <option value="Senior">Senior / Executive Leadership</option>
+                    <option value="Tech">Technology & Engineering</option>
+                    <option value="Non-Tech">Product & Business Analytics</option>
+                    <option value="Emerging">Emerging Technologies (AI/ML)</option>
+                    <option value="Senior">Executive Leadership</option>
+                    <option value="Other">Other</option>
                   </select>
+                  
+                  {/* Custom Domain conditional input */}
+                  {formData.domain === "Other" && (
+                    <div className="mt-2 animate-fade-in">
+                      <input
+                        type="text"
+                        value={customDomain}
+                        onChange={(e) => {
+                          setCustomDomain(e.target.value);
+                          if (errors.customDomain) {
+                            setErrors((prev) => {
+                              const copy = { ...prev };
+                              delete copy.customDomain;
+                              return copy;
+                            });
+                          }
+                        }}
+                        placeholder="e.g., Financial Operations"
+                        className={`w-full px-3 py-2 border bg-white rounded-lg text-slate-800 text-sm focus:outline-none focus:ring-2 transition-all ${
+                          errors.customDomain ? "border-red-300 focus:ring-red-100" : "border-slate-200 focus:ring-brand-primary-light/20 focus:border-brand-primary-light"
+                        }`}
+                      />
+                      {errors.customDomain && <p className="text-red-500 text-xs mt-1">{errors.customDomain}</p>}
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -289,60 +481,127 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                 </div>
               </div>
 
-              {/* Mode & Location Row */}
+              {/* Preferred Delivery Method Row */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                  Preferred Delivery Method
+                </label>
+                <select
+                  name="deliveryMode"
+                  value={formData.deliveryMode}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary-light/20 focus:border-brand-primary-light transition-all"
+                >
+                  <option value="Live Virtual">Live Virtual (Online)</option>
+                  <option value="On-Site Physical">On-Site Classroom</option>
+                  <option value="Hybrid">Hybrid Blended</option>
+                </select>
+              </div>
+
+              {/* Country & City Dropdowns */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                    Preferred Delivery
+                    Country <span className="text-red-500">*</span>
                   </label>
                   <select
-                    name="deliveryMode"
-                    value={formData.deliveryMode}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary-light/20 focus:border-brand-primary-light transition-all"
+                    name="country"
+                    value={formData.country}
+                    onChange={handleCountryChange}
+                    className={`w-full px-3 py-2 border rounded-lg text-slate-800 text-sm focus:outline-none focus:ring-2 bg-white transition-all ${
+                      errors.country ? "border-red-300 focus:ring-red-100" : "border-slate-200 focus:ring-brand-primary-light/20 focus:border-brand-primary-light"
+                    }`}
                   >
-                    <option value="Live Virtual">Live Virtual (Online)</option>
-                    <option value="On-Site Physical">On-Site Classroom</option>
-                    <option value="Hybrid">Hybrid Blended</option>
+                    {Object.keys(countriesData).map((country) => (
+                      <option key={country} value={country}>
+                        {country}
+                      </option>
+                    ))}
                   </select>
+                  {errors.country && <p className="text-red-500 text-xs mt-1">{errors.country}</p>}
                 </div>
 
-                {/* Delivery format - split city/country */}
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block text-[10px] font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                      City <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleChange}
-                      placeholder="New York"
-                      className={`w-full px-3 py-2 border rounded-lg text-slate-800 text-sm focus:outline-none focus:ring-2 transition-all ${
-                        errors.city ? "border-red-300 focus:ring-red-100" : "border-slate-200 focus:ring-brand-primary-light/20 focus:border-brand-primary-light"
-                      }`}
-                    />
-                    {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                      Country <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="country"
-                      value={formData.country}
-                      onChange={handleChange}
-                      placeholder="USA"
-                      className={`w-full px-3 py-2 border rounded-lg text-slate-800 text-sm focus:outline-none focus:ring-2 transition-all ${
-                        errors.country ? "border-red-300 focus:ring-red-100" : "border-slate-200 focus:ring-brand-primary-light/20 focus:border-brand-primary-light"
-                      }`}
-                    />
-                    {errors.country && <p className="text-red-500 text-xs mt-1">{errors.country}</p>}
-                  </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                    City <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="city"
+                    value={formData.city}
+                    onChange={handleChange}
+                    disabled={formData.country === "Other"}
+                    className={`w-full px-3 py-2 border rounded-lg text-slate-800 text-sm focus:outline-none focus:ring-2 bg-white transition-all disabled:bg-slate-50 disabled:text-slate-400 ${
+                      errors.city ? "border-red-300 focus:ring-red-100" : "border-slate-200 focus:ring-brand-primary-light/20 focus:border-brand-primary-light"
+                    }`}
+                  >
+                    {(countriesData[formData.country] || ["Other"]).map((city) => (
+                      <option key={city} value={city}>
+                        {city}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
                 </div>
               </div>
+
+              {/* Custom Country & City Text Inputs (Conditional Row) */}
+              {(showCustomCountryInput || showCustomCityInput) && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-4.5 rounded-xl border border-slate-150 animate-fade-in">
+                  {showCustomCountryInput && (
+                    <div>
+                      <label className="block text-[10px] font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                        Specify Country <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={customCountry}
+                        onChange={(e) => {
+                          setCustomCountry(e.target.value);
+                          if (errors.customCountry) {
+                            setErrors((prev) => {
+                              const copy = { ...prev };
+                              delete copy.customCountry;
+                              return copy;
+                            });
+                          }
+                        }}
+                        placeholder="e.g., Canada"
+                        className={`w-full px-3 py-2 border bg-white rounded-lg text-slate-800 text-sm focus:outline-none focus:ring-2 transition-all ${
+                          errors.customCountry ? "border-red-300 focus:ring-red-100" : "border-slate-250 focus:ring-brand-primary-light/20 focus:border-brand-primary-light"
+                        }`}
+                      />
+                      {errors.customCountry && <p className="text-red-500 text-xs mt-1">{errors.customCountry}</p>}
+                    </div>
+                  )}
+
+                  {showCustomCityInput && (
+                    <div className={showCustomCountryInput ? "" : "col-span-2"}>
+                      <label className="block text-[10px] font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                        Specify City <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={customCity}
+                        onChange={(e) => {
+                          setCustomCity(e.target.value);
+                          if (errors.customCity) {
+                            setErrors((prev) => {
+                              const copy = { ...prev };
+                              delete copy.customCity;
+                              return copy;
+                            });
+                          }
+                        }}
+                        placeholder="e.g., Toronto"
+                        className={`w-full px-3 py-2 border bg-white rounded-lg text-slate-800 text-sm focus:outline-none focus:ring-2 transition-all ${
+                          errors.customCity ? "border-red-300 focus:ring-red-100" : "border-slate-250 focus:ring-brand-primary-light/20 focus:border-brand-primary-light"
+                        }`}
+                      />
+                      {errors.customCity && <p className="text-red-500 text-xs mt-1">{errors.customCity}</p>}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Submit Button */}
               <button
