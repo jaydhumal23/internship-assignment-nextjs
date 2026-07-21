@@ -13,9 +13,115 @@ import FAQs from "@/components/FAQs";
 import Footer from "@/components/Footer";
 import EnquiryModal from "@/components/EnquiryModal";
 
+const PATIENCE_MESSAGES = [
+  "Reticulating splines...",
+  "Baking pixels at 350°F...",
+  "Untangling the internet...",
+  "Assembling reality...",
+  "Charging flux capacitors...",
+  "Convincing electrons to behave...",
+];
+
+function Preloader({ children }: { children: React.ReactNode }) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isVisible, setIsVisible] = useState(true);
+  const [messageIndex, setMessageIndex] = useState(0);
+  const [isFading, setIsFading] = useState(false);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setIsFading(true);
+      window.setTimeout(() => {
+        setMessageIndex((i) => (i + 1) % PATIENCE_MESSAGES.length);
+        setIsFading(false);
+      }, 250);
+    }, 2200);
+
+    return () => window.clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (document.readyState === "complete") {
+      requestAnimationFrame(() => {
+        setIsLoading(false);
+        window.setTimeout(() => setIsVisible(false), 900);
+      });
+      return;
+    }
+
+    const handleLoad = () => {
+      setIsLoading(false);
+      window.setTimeout(() => setIsVisible(false), 900);
+    };
+
+    window.addEventListener("load", handleLoad);
+    return () => window.removeEventListener("load", handleLoad);
+  }, []);
+
+  if (!isVisible) return <>{children}</>;
+
+  return (
+    <div className="relative">
+      <div
+        className={[
+          "fixed inset-0 z-[9999] flex items-center justify-center bg-slate-50 transition-opacity duration-[900ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
+          isLoading ? "opacity-100" : "opacity-0 pointer-events-none",
+        ].join(" ")}
+        aria-hidden={!isLoading}
+      >
+        <div className="flex flex-col items-center gap-8">
+          <div className="flex items-center gap-1.5">
+            {[0, 1, 2, 3, 4].map((i) => (
+              <span
+                key={i}
+                className="h-8 w-0.5 origin-center rounded-full bg-blue-600"
+                style={{
+                  animation: "line-bar 1.4s ease-in-out infinite",
+                  animationDelay: `${i * 0.12}s`,
+                }}
+              />
+            ))}
+          </div>
+
+          <span
+            className={[
+              "min-h-[1em] text-[11px] font-medium tracking-[0.25em] uppercase text-slate-500 transition-opacity duration-250",
+              isFading ? "opacity-0" : "opacity-100",
+            ].join(" ")}
+          >
+            {PATIENCE_MESSAGES[messageIndex]}
+          </span>
+        </div>
+      </div>
+
+      <div
+        className={[
+          "transition-opacity duration-500",
+          isLoading ? "opacity-0" : "opacity-100",
+        ].join(" ")}
+        aria-hidden={isLoading}
+      >
+        {children}
+      </div>
+
+      <style>{`
+        @keyframes line-bar {
+          0%, 100% {
+            transform: scaleY(0.35);
+            opacity: 0.4;
+          }
+          50% {
+            transform: scaleY(1);
+            opacity: 1;
+          }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 export default function Home() {
   const [isEnquireModalOpen, setIsEnquireModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   const openEnquireModal = () => setIsEnquireModalOpen(true);
   const closeEnquireModal = () => setIsEnquireModalOpen(false);
@@ -33,32 +139,20 @@ export default function Home() {
 
     const preloadAssets = async () => {
       await Promise.all(imageUrls.map(preloadImage));
-      setIsLoading(false);
+      window.dispatchEvent(new Event("load"));
     };
 
     void preloadAssets();
   }, []);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-800">
-        <div className="flex flex-col items-center text-center px-6">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-slate-300 border-t-blue-600 animate-spin" />
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">
-            Loading
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <>
-      {/* Navigation Header */}
-      <Header onEnquireClick={openEnquireModal} />
+    <Preloader>
+      <>
+        {/* Navigation Header */}
+        <Header onEnquireClick={openEnquireModal} />
 
-      {/* Main Content Layout with Ambient Background Animations */}
-      <main className="flex-grow relative overflow-hidden bg-[#FAFBFD]">
+        {/* Main Content Layout with Ambient Background Animations */}
+        <main className="flex-grow relative overflow-hidden bg-[#FAFBFD]">
         
         {/* Sleek Constant Background Animations (z-0, pointer-events-none, sits behind content) */}
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none">
@@ -123,8 +217,9 @@ export default function Home() {
       {/* Footer */}
       <Footer />
 
-      {/* Leads Capture Popup Form Modal */}
-      <EnquiryModal isOpen={isEnquireModalOpen} onClose={closeEnquireModal} />
-    </>
+        {/* Leads Capture Popup Form Modal */}
+        <EnquiryModal isOpen={isEnquireModalOpen} onClose={closeEnquireModal} />
+      </>
+    </Preloader>
   );
 }
