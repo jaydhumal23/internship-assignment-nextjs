@@ -467,8 +467,8 @@ export default function AdminLeads() {
       <header
         className={`fixed left-1/2 -translate-x-1/2 z-40 transition-all duration-500 ease-in-out border bg-white/85 backdrop-blur-md ${
           isScrolled
-            ? "top-3 w-[95%] max-w-[1400px] rounded-2xl py-2 px-8 shadow-lg border-blue-100/40"
-            : "top-4 w-[95%] max-w-[1400px] rounded-2xl py-3.5 px-8 shadow-sm border-slate-200/60"
+            ? "top-3 w-[95%] max-w-[1400px] rounded-2xl py-2 px-4 sm:px-8 shadow-lg border-blue-100/40"
+            : "top-4 w-[95%] max-w-[1400px] rounded-2xl py-3 sm:py-3.5 px-4 sm:px-8 shadow-sm border-slate-200/60"
         }`}
       >
         <div className="flex items-center justify-between gap-4">
@@ -480,19 +480,19 @@ export default function AdminLeads() {
             </Link>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-lg font-black text-brand-primary tracking-tight">accredian</span>
-                <span className={`px-1.5 py-0.5 text-[9px] font-extrabold text-brand-primary uppercase rounded tracking-wider border transition-all duration-500 ${
+                <span className="text-base sm:text-lg font-black text-brand-primary tracking-tight">accredian</span>
+                <span className={`hidden xs:inline px-1.5 py-0.5 text-[9px] font-extrabold text-brand-primary uppercase rounded tracking-wider border transition-all duration-500 ${
                   isScrolled ? "bg-brand-primary/5 border-brand-primary/10" : "bg-brand-primary/10 border-brand-primary/10"
                 }`}>
                   Enterprise
                 </span>
               </div>
-              <h1 className="text-base font-black text-slate-900 leading-tight">Upskilling Leads Manager</h1>
+              <h1 className="hidden min-[420px]:block text-sm sm:text-base font-black text-slate-900 leading-tight">Leads Manager</h1>
             </div>
           </div>
 
           {/* Right — actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={fetchLeads}
               title="Refresh database"
@@ -504,20 +504,22 @@ export default function AdminLeads() {
             <button
               onClick={exportToCSV}
               disabled={leads.length === 0}
+              title="Export CSV"
               className={`bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold shadow-md shadow-blue-600/15 hover:shadow-lg transition-all flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${
-                isScrolled ? "px-4 py-2 rounded-full" : "px-4 py-2 rounded-xl"
+                isScrolled ? "px-2 sm:px-4 py-2 rounded-full" : "px-2 sm:px-4 py-2 rounded-xl"
               }`}
             >
               <Download className="w-3.5 h-3.5 stroke-[2.5]" />
-              Export Database
+              <span className="hidden sm:inline">Export CSV</span>
             </button>
 
             <button
               onClick={handleLogout}
-              className="px-3 py-2 bg-slate-50 hover:bg-rose-50 hover:text-rose-600 border border-slate-200 rounded-xl transition-all flex items-center gap-1.5 text-xs font-bold cursor-pointer text-slate-500"
+              title="Logout"
+              className="p-2 sm:px-3 sm:py-2 bg-slate-50 hover:bg-rose-50 hover:text-rose-600 border border-slate-200 rounded-xl transition-all flex items-center gap-1.5 text-xs font-bold cursor-pointer text-slate-500"
             >
               <LogOut className="w-3.5 h-3.5 stroke-[2.5]" />
-              Logout
+              <span className="hidden sm:inline">Logout</span>
             </button>
           </div>
         </div>

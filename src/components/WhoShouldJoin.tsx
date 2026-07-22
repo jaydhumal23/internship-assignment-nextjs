@@ -42,7 +42,7 @@ export default function WhoShouldJoin() {
           </div>
 
           {/* Cutout Image — centered in the gap, anchored to bottom, inside card */}
-          <div className="absolute bottom-0 left-[32%] lg:left-[34%] -translate-x-1/2 w-80 sm:w-96 lg:w-[820px] h-auto select-none pointer-events-none z-20">
+          <div className="absolute bottom-0 max-[450px]:left-[62%] left-[32%] lg:left-[34%] -translate-x-1/2 w-80 sm:w-96 lg:w-[820px] h-auto select-none pointer-events-none z-20">
             <img
               src="/var2.png"
               alt="Corporate Professionals"
